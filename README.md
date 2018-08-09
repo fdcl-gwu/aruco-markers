@@ -15,7 +15,7 @@ You can install the standalone ArUco library by downloading the source files whi
 But it is highly recommended to install ArUco library packed in OpenCV library.
 The instruction below are for installing OpenCV with ArUco library.
 
-You can install OpenCV using the master branch of their repository, *OR* using the submodules added to this repository.
+You can install OpenCV using the master branch of their repository, **OR** using the submodules added to this repository.
 Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository works without issues.
 So it is recommended to install from the submodules.
 
