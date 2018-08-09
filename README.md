@@ -7,6 +7,7 @@ This repository includes codes that can be used to work with the augmented reali
     1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
+3. [ Detecting the Markers](#detecting-the-markers)
 
 
 ### Installation
@@ -73,4 +74,17 @@ make
 # create a marker board
 # for details about the parameters, run just ./generate_board 
 ./generate_board --bb=4 -h=2 -w=5 -l=200 -s=50 -d=16 --si board.jpg
+```
+
+
+### Detecting the Markers
+First, print the [generated markers](#detecting-the-markers).
+Connect a camera to the computer and run below lines:
+```
+cd detect_markers
+mkdir build && cd build
+cmake ../
+make
+
+./detect_markers
 ```
