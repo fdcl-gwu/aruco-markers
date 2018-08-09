@@ -91,7 +91,7 @@ make
 
 ### Camera Calibration
 To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
-Run below lines to perfrom the camera calibration:
+Run below lines to perform the camera calibration:
 ```
 cd camera_calibration
 mkdir build && cd build
