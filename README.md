@@ -4,7 +4,7 @@ This repository includes codes that can be used to work with the augmented reali
 
 ## Contents
 1. [Installation](#installation)
-    1. [Installing v3.4.2 (recommended)](#installing-v3.4.2-(recommended))
+    1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
 
