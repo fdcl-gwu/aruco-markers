@@ -69,16 +69,16 @@ make
 
 # create a single marker
 # for details about the parameters, run just ./generate_marker
-./generate_marker --b=4 -d=16 --id=108 --ms=400 --si marker.jpg
+./generate_marker --b=1 -d=16 --id=108 --ms=400 --si marker.jpg
 
 # create a marker board
 # for details about the parameters, run just ./generate_board 
-./generate_board --bb=4 -h=2 -w=5 -l=200 -s=50 -d=16 --si board.jpg
+./generate_board --bb=1 -h=2 -w=4 -l=200 -s=100 -d=16 --si board.jpg
 ```
 
 
 ### Detecting the Markers
-First, print the [generated markers](#detecting-the-markers).
+First, print the [generated markers](#generating-markers).
 Connect a camera to the computer and run below lines:
 ```
 cd detect_markers
@@ -88,3 +88,18 @@ make
 
 ./detect_markers
 ```
+
+### Camera Calibration
+To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
+Run below lines to perfrom the camera calibration:
+```
+cd camera_calibration
+mkdir build && cd build
+cmake ../
+make
+
+# below command is accurate only if you used the same parameters when you generated the markers
+# if you changed any of them, change below arduments accordingly
+./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=200 -s=100 ../../calibration_params.yml
+```
+
