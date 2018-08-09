@@ -7,6 +7,7 @@ int main(int argc, char **argv)
     int wait_time = 10;
     cv::Mat image, image_copy;
     cv::Mat camera_matrix, dist_coeffs;
+    std::ostringstream vector_to_marker;
     
     cv::VideoCapture in_video;
     in_video.open(0);
@@ -39,8 +40,32 @@ int main(int argc, char **argv)
                     dist_coeffs, rvecs, tvecs);
             // draw axis for each marker
             for(int i=0; i < ids.size(); i++)
+            {
                 cv::aruco::drawAxis(image_copy, camera_matrix, dist_coeffs,
                         rvecs[i], tvecs[i], 0.1);
+                
+                vector_to_marker.str(std::string());
+                vector_to_marker << std::setprecision(4) 
+                                 << "x: " <<  tvecs[0](0);
+                cv::putText(image_copy, vector_to_marker.str(), 
+                        cvPoint(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
+                        cvScalar(0, 252, 124), 1, CV_AA);
+                
+                vector_to_marker.str(std::string());
+                vector_to_marker << std::setprecision(4)
+                                 << "y: " << tvecs[0](1); 
+                cv::putText(image_copy, vector_to_marker.str(), 
+                        cvPoint(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
+                        cvScalar(0, 252, 124), 1, CV_AA);
+                
+                vector_to_marker.str(std::string());
+                vector_to_marker << std::setprecision(4)
+                                 << "z: " << tvecs[0](2);
+                cv::putText(image_copy, vector_to_marker.str(), 
+                        cvPoint(10, 70), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
+                        cvScalar(0, 252, 124), 1, CV_AA);
+                
+            }
         }
         
         cv::imshow("Pose estimation", image_copy);
