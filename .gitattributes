@@ -1,0 +1,149 @@
+# LaTeX
+*.tex text eol=lf
+*.cls text eol=lf
+*.sty text eol=lf
+*.bst text eol=lf
+*.bib text eol=lf
+
+#sources
+*.c text eol=lf
+*.cc text eol=lf
+*.cxx text eol=lf
+*.cpp text eol=lf
+*.c++ text eol=lf
+*.hpp text eol=lf
+*.h text eol=lf
+*.h++ text eol=lf
+*.hh text eol=lf
+
+# Compiled Object files
+*.slo binary
+*.lo binary
+*.o binary
+*.obj binary
+
+# Precompiled Headers
+*.gch binary
+*.pch binary
+
+# Compiled Dynamic libraries
+*.so binary
+*.dylib binary
+*.dll binary
+
+# Compiled Static libraries
+*.lai binary
+*.la binary
+*.a binary
+*.lib binary
+
+# Executables
+*.exe binary
+*.out binary
+*.app binary
+
+
+#common settings that generally should always be used with your language specific settings
+
+# Auto detect text files and perform LF normalization
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+* text=auto
+
+#
+# The above will handle all files NOT found below
+#
+
+# Documents
+*.doc	 diff=astextplain
+*.DOC	 diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF	 diff=astextplain
+*.rtf	 diff=astextplain
+*.RTF	 diff=astextplain
+*.md text eol=lf
+*.adoc text
+*.textile text
+*.mustache text
+*.csv text eol=lf
+*.tab text eol=lf
+*.tsv text eol=lf
+*.sql text eol=lf
+
+# Graphics
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.tif binary
+*.tiff binary
+*.ico binary
+*.svg binary
+*.eps binary
+# Basic .gitattributes for a MATLAB repo.
+# This template includes Simulink and MuPAD extensions, in addition
+# to the MATLAB extensions.
+
+# Source files
+# ============
+*.m             text eol=lf
+*.mu            text eol=lf
+
+# Caution: *.m also matches Mathematica packages.
+
+# Binary files
+# ============
+*.p             binary
+*.mex*          binary
+*.fig           binary
+*.mat           binary
+*.mdl           binary
+*.slx           binary
+*.mdlp          binary
+*.slxp          binary
+*.sldd          binary
+*.mltbx         binary
+*.mlappinstall  binary
+*.mlpkginstall  binary
+*.mn            binary
+# Basic .gitattributes for a python repo.
+
+# Source files
+# ============
+*.pxd		text eol=lf
+*.py 		text eol=lf
+*.py3 		text eol=lf
+*.pyw 		text eol=lf
+*.pyx  		text eol=lf
+
+# Binary files
+# ============
+*.db		binary
+*.p 		binary
+*.pkl 		binary
+*.pyc 		binary
+*.pyd		binary
+*.pyo 		binary
+
+# Note: .db, .p, and .pkl files are associated
+# with the python modules ``pickle``, ``dbm.*``,
+# ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
+# (among others).# Auto detect text files and perform LF normalization
+# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
+* text=auto
+
+# Custom for Visual Studio
+*.sln text eol=crlf
+*.csproj text eol=crlf
+*.vbproj text eol=crlf
+*.fsproj text eol=crlf
+*.dbproj text eol=crlf
+
+*.vcxproj text eol=crlf
+*.vcxitems text eol=crlf
+*.props text eol=crlf
+*.filters text eol=crlf
+
