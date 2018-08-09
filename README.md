@@ -19,6 +19,7 @@ You can install OpenCV using the master branch of their repository, **OR** using
 Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository works without issues.
 So it is recommended to install from the submodules.
 
+
 #### Installing v3.4.2 (recommended)
 ```
 sudo apt-get install build-essential
@@ -33,6 +34,7 @@ make -j4  # if you have more cores on your computer, substitute 4 with the numbe
           # use command "nproc" to find the number fo cores
 sudo make install
 ```
+
 
 #### Installing the Latest
 ```
@@ -53,7 +55,22 @@ make -j4  # if you have more cores on your computer, substitute 4 with the numbe
 sudo make install
 ```
 
+
 ### Generating Markers
 To detect the markers using a camera, first you need to print the markers.
 The ArUco library comes with few functions to generate the markers, and they are copied to this repository for the ease of finding them.
 
+```
+cd create_markers
+mkdir build && cd build
+cmake ../
+make
+
+# create a single marker
+# for details about the parameters, run just ./generate_marker
+./generate_marker --b=4 -d=16 --id=108 --ms=400 --si marker.jpg
+
+# create a marker board
+# for details about the parameters, run just ./generate_board 
+./generate_board --bb=4 -h=2 -w=5 -l=200 -s=50 -d=16 --si board.jpg
+```
