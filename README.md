@@ -79,6 +79,16 @@ make
 ./generate_board --bb=1 -h=2 -w=4 -l=200 -s=100 -d=16 --si board.jpg
 ```
 
+Marker should look like this:
+<center>
+  <img src="./images/marker.jpg"  width="150"/> 
+</center>
+
+Board looks like this:
+<center>
+  <img src="./images/board.jpg"  width="350"/>
+</center>
+
 
 ## Detecting the Markers
 First, print the [generated markers](#generating-markers).
@@ -91,6 +101,12 @@ make
 
 ./detect_markers
 ```
+
+All the detected markers would be drawn on the image.
+<center>
+  <img src="./images/detected_markers.png"  width="350"/>
+</center>
+
 
 ## Camera Calibration
 To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
@@ -107,6 +123,11 @@ make
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=200 -s=100 ../../calibration_params.yml
 ```
 
+Then points the camera at the marker at different orientations and at different angles and save those images by pressing key `C`. 
+These instructions should appear on the screen.
+Around 30 images should be good enough.
+
+
 ## Pose Estimation
 To estimate the translation and the rotation of the ArUco marker, run below code:
 ```
@@ -122,3 +143,10 @@ make
 
 ./pose_estimation
 ```
+
+Below image shows the output of this code. 
+The distances shown in the left top corner are in meters with axes as same as thos defined in OpenCV model, i.e., `x`-axis increases from left to right of the image, `y`-axis increases from top to bottom of the image, and the `z`-axis points outwards the camera, with the origin on the top left corner of the image.
+The axes drawn on the markers represents the orientation of the marker with the Red-Green-Blue axes order.
+<center>
+  <img src="./images/pose_estimation.png"  width="300"/>
+</center>
