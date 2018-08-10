@@ -21,7 +21,7 @@ int main(int argc, char **argv)
         if (ids.size() > 0)
             cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
         
-        cv::imshow("out", image_copy);
+        cv::imshow("Detected markers", image_copy);
         char key = (char) cv::waitKey(wait_time);
         if (key == 27)
             break;
