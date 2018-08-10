@@ -1,6 +1,7 @@
 # ArUco Markers
 
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
+The programs to create the markers and to calibrate cameras are copies of the examples included with the OpenCV libraries, which are added for the ease of use.
 
 ## Contents
 1. [Installing OpenCV](#installation-opencv)
@@ -91,6 +92,7 @@ make
 
 ### Camera Calibration
 To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
+
 Run below lines to perform the camera calibration:
 ```
 cd camera_calibration
@@ -107,6 +109,11 @@ make
 To estimate the translation and the rotation of the ArUco marker, run below code:
 ```
 cd pose_estimation
+
+# measure the length of the marker you plan to measure with a ruler
+# open src/main.cpp and update the variable 'actual_marker_length' with
+# the measured value (in meters)
+
 mkdir build && cd build
 cmake ../
 make
