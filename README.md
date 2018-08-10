@@ -4,14 +4,14 @@ This repository includes codes that can be used to work with the augmented reali
 The programs to create the markers and to calibrate cameras are copies of the examples included with the OpenCV libraries, which are added for the ease of use.
 
 ## Contents
-1. [Installing OpenCV](#installation-opencv)
+1. [Installing OpenCV](#installing-opencv)
     1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
 3. [ Detecting the Markers](#detecting-the-markers)
 
 
-### Installing OpenCV
+## Installing OpenCV
 
 You can install the standalone ArUco library by downloading the source files which can be found in the above website and building and installing them.
 But it is highly recommended to install ArUco library packed in OpenCV library.
@@ -22,7 +22,7 @@ Building and installing OpenCV with the provided submodules guarantees that the 
 So it is recommended to install from the submodules.
 
 
-#### Installing v3.4.2 (recommended)
+### Installing v3.4.2 (recommended)
 ```
 sudo apt-get install build-essential
 sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
@@ -38,7 +38,7 @@ sudo make install
 ```
 
 
-#### Installing the Latest
+### Installing the Latest
 ```
 sudo apt-get install build-essential
 sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
@@ -58,7 +58,7 @@ sudo make install
 ```
 
 
-### Generating Markers
+## Generating Markers
 To detect the markers using a camera, first you need to print the markers.
 The ArUco library comes with few functions to generate the markers, and they are copied to this repository for the ease of finding them.
 
@@ -78,7 +78,7 @@ make
 ```
 
 
-### Detecting the Markers
+## Detecting the Markers
 First, print the [generated markers](#generating-markers).
 Connect a camera to the computer and run below lines:
 ```
@@ -90,7 +90,7 @@ make
 ./detect_markers
 ```
 
-### Camera Calibration
+## Camera Calibration
 To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
 
 Run below lines to perform the camera calibration:
@@ -105,7 +105,7 @@ make
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=200 -s=100 ../../calibration_params.yml
 ```
 
-### Pose Estimation
+## Pose Estimation
 To estimate the translation and the rotation of the ArUco marker, run below code:
 ```
 cd pose_estimation
