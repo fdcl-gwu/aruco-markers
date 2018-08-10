@@ -8,7 +8,9 @@ The programs to create the markers and to calibrate cameras are copies of the ex
     1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
-3. [ Detecting the Markers](#detecting-the-markers)
+3. [Detecting the Markers](#detecting-the-markers)
+4. [Camera Calibration](#camera-calibration)
+5. [Pose Estimation](#pose-estimation)
 
 
 ## Installing OpenCV
