@@ -5,6 +5,8 @@
 int main(int argc, char **argv)
 {
     int wait_time = 10;
+    float actual_marker_length = 0.04;  // this should be in meters
+
     cv::Mat image, image_copy;
     cv::Mat camera_matrix, dist_coeffs;
     std::ostringstream vector_to_marker;
@@ -36,8 +38,8 @@ int main(int argc, char **argv)
         {
             cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
             std::vector<cv::Vec3d> rvecs, tvecs;
-            cv::aruco::estimatePoseSingleMarkers(corners, 0.04, camera_matrix,
-                    dist_coeffs, rvecs, tvecs);
+            cv::aruco::estimatePoseSingleMarkers(corners, actual_marker_length,
+                    camera_matrix, dist_coeffs, rvecs, tvecs);
             // draw axis for each marker
             for(int i=0; i < ids.size(); i++)
             {
