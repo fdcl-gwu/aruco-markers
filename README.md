@@ -3,14 +3,14 @@
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
 
 ## Contents
-1. [Installation](#installation)
+1. [Installing OpenCV](#installation-opencv)
     1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
 3. [ Detecting the Markers](#detecting-the-markers)
 
 
-### Installation
+### Installing OpenCV
 
 You can install the standalone ArUco library by downloading the source files which can be found in the above website and building and installing them.
 But it is highly recommended to install ArUco library packed in OpenCV library.
@@ -31,7 +31,7 @@ git submodule update --init
 cd libraries/opencv
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
-make -j4  # if you have more cores on your computer, substitute 4 with the number of cores
+make -j4  # if you have more/less cores on your computer, substitute 4 with the number of cores
           # use command "nproc" to find the number fo cores
 sudo make install
 ```
@@ -103,3 +103,13 @@ make
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=200 -s=100 ../../calibration_params.yml
 ```
 
+### Pose Estimation
+To estimate the translation and the rotation of the ArUco marker, run below code:
+```
+cd pose_estimation
+mkdir build && cd build
+cmake ../
+make
+
+./pose_estimation
+```
