@@ -45,21 +45,21 @@ int main(int argc, char **argv)
                         rvecs[i], tvecs[i], 0.1);
                 
                 vector_to_marker.str(std::string());
-                vector_to_marker << std::setprecision(4) 
+                vector_to_marker << std::setprecision(4) << std::setw(8)
                                  << "x: " <<  tvecs[0](0);
                 cv::putText(image_copy, vector_to_marker.str(), 
                         cvPoint(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
                         cvScalar(0, 252, 124), 1, CV_AA);
                 
                 vector_to_marker.str(std::string());
-                vector_to_marker << std::setprecision(4)
+                vector_to_marker << std::setprecision(4) << std::setw(8)
                                  << "y: " << tvecs[0](1); 
                 cv::putText(image_copy, vector_to_marker.str(), 
                         cvPoint(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
                         cvScalar(0, 252, 124), 1, CV_AA);
                 
                 vector_to_marker.str(std::string());
-                vector_to_marker << std::setprecision(4)
+                vector_to_marker << std::setprecision(4) << std::setw(8)
                                  << "z: " << tvecs[0](2);
                 cv::putText(image_copy, vector_to_marker.str(), 
                         cvPoint(10, 70), cv::FONT_HERSHEY_SIMPLEX, 0.6, 
