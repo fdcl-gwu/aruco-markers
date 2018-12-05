@@ -1,7 +1,7 @@
 # ArUco Markers
 
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
-The programs to create the markers and to calibrate cameras are copies of the examples included with the OpenCV libraries, which are added for the ease of use.
+A few programs in the repository, including the codes to create the markers and to calibrate the cameras, are copies of the examples included with the OpenCV libraries with minor changes, which are added so that everything is in one place.
 
 ## Contents
 1. [Installing OpenCV](#installing-opencv)
