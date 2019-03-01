@@ -119,8 +119,8 @@ cmake ../
 make
 
 # below command is accurate only if you used the same parameters when you generated the markers
-# if you changed any of them, change below arduments accordingly
-./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=200 -s=100 ../../calibration_params.yml
+# if you changed any of them, change below arguments accordingly
+./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 ```
 
 Then points the camera at the marker at different orientations and at different angles and save those images by pressing key `C`. 
