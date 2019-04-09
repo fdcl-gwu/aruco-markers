@@ -29,7 +29,7 @@
 int main(int argc, char **argv)
 {
     int wait_time = 10;
-    float actual_marker_length = 0.04;  // this should be in meters
+    float actual_marker_length = 0.101;  // this should be in meters
 
     cv::Mat image, image_copy;
     cv::Mat camera_matrix, dist_coeffs;
