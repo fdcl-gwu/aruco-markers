@@ -1,5 +1,9 @@
 # ArUco Markers
 
+<center>
+  <img src="./images/detected_cube.gif"  width="350"/>
+</center>
+
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
 A few programs in the repository, including the codes to create the markers and to calibrate the cameras, are copies of the examples included with the OpenCV libraries with minor changes, which are added so that everything is in one place.
 
@@ -149,4 +153,28 @@ The distances shown in the left top corner are in meters with axes as same as th
 The axes drawn on the markers represents the orientation of the marker with the Red-Green-Blue axes order.
 <center>
   <img src="./images/pose_estimation.png"  width="300"/>
+</center>
+
+
+## Draw a Cube 
+To estimate pose and draw a cube over the ArUco marker, run below code:
+```
+cd draw_cube
+
+# measure the length of the marker you plan to measure with a ruler
+# open src/main.cpp and update the variable 'actual_marker_length' with
+# the measured value (in meters)
+
+mkdir build && cd build
+cmake ../
+make
+
+./draw_cube
+```
+
+Below image shows the output of this code. 
+The distances shown in the left top corner are in meters with axes as same as thos defined in OpenCV model, i.e., `x`-axis increases from left to right of the image, `y`-axis increases from top to bottom of the image, and the `z`-axis points outwards the camera, with the origin on the top left corner of the image.
+
+<center>
+  <img src="./images/detected_cube.gif"  width="300"/>
 </center>
