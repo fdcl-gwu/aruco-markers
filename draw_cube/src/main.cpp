@@ -28,8 +28,8 @@
 
 
 void drawCubeWireframe(
-    cv::InputOutputArray _image, cv::InputArray _cameraMatrix, 
-    cv::InputArray _distCoeffs, cv::InputArray _rvec, cv::InputArray _tvec, 
+    cv::InputOutputArray image, cv::InputArray cameraMatrix, 
+    cv::InputArray distCoeffs, cv::InputArray rvec, cv::InputArray tvec, 
     float l
 );
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
                     image_copy, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 
                     actual_marker_l
                 );
-
+                
                 vector_to_marker.str(std::string());
                 vector_to_marker << std::setprecision(4)
                                  << "x: " << std::setw(8) << tvecs[0](0);
@@ -118,15 +118,15 @@ int main(int argc, char **argv)
 }
 
 void drawCubeWireframe(
-    cv::InputOutputArray _image, cv::InputArray _cameraMatrix, 
-    cv::InputArray _distCoeffs, cv::InputArray _rvec, cv::InputArray _tvec, 
+    cv::InputOutputArray image, cv::InputArray cameraMatrix, 
+    cv::InputArray distCoeffs, cv::InputArray rvec, cv::InputArray tvec, 
     float l
 )
 {
 
     CV_Assert(
-        _image.getMat().total() != 0 &&
-        (_image.getMat().channels() == 1 || _image.getMat().channels() == 3)
+        image.getMat().total() != 0 &&
+        (image.getMat().channels() == 1 || image.getMat().channels() == 3)
     );
     CV_Assert(l > 0);
     float half_l = l / 2.0;
@@ -144,20 +144,20 @@ void drawCubeWireframe(
 
     std::vector<cv::Point2f> imagePoints;
     projectPoints(
-        axisPoints, _rvec, _tvec, _cameraMatrix, _distCoeffs, imagePoints
+        axisPoints, rvec, tvec, cameraMatrix, distCoeffs, imagePoints
     );
 
     // draw cube edges lines
-    line(_image, imagePoints[0], imagePoints[1], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[0], imagePoints[3], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[0], imagePoints[4], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[1], imagePoints[2], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[1], imagePoints[5], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[2], imagePoints[3], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[2], imagePoints[6], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[3], imagePoints[7], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[4], imagePoints[5], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[4], imagePoints[7], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[5], imagePoints[6], cv::Scalar(255, 0, 0), 3);
-    line(_image, imagePoints[6], imagePoints[7], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[0], imagePoints[1], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[0], imagePoints[3], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[0], imagePoints[4], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[1], imagePoints[2], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[1], imagePoints[5], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[2], imagePoints[3], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[2], imagePoints[6], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[3], imagePoints[7], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[4], imagePoints[5], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[4], imagePoints[7], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[5], imagePoints[6], cv::Scalar(255, 0, 0), 3);
+    cv::line(image, imagePoints[6], imagePoints[7], cv::Scalar(255, 0, 0), 3);
 }
