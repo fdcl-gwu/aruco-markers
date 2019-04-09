@@ -15,6 +15,7 @@ A few programs in the repository, including the codes to create the markers and 
 3. [Detecting the Markers](#detecting-the-markers)
 4. [Camera Calibration](#camera-calibration)
 5. [Pose Estimation](#pose-estimation)
+6. [Draw a Cube](#draw-a-cube)
 
 
 ## Installing OpenCV
