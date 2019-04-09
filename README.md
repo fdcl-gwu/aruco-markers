@@ -172,8 +172,7 @@ make
 ./draw_cube
 ```
 
-Below image shows the output of this code. 
-The distances shown in the left top corner are in meters with axes as same as thos defined in OpenCV model, i.e., `x`-axis increases from left to right of the image, `y`-axis increases from top to bottom of the image, and the `z`-axis points outwards the camera, with the origin on the top left corner of the image.
+Below image shows the output of this code.
 
 <center>
   <img src="./images/detected_cube.gif"  width="300"/>
