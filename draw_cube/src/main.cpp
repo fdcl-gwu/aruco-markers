@@ -21,9 +21,10 @@
  *
  */
 
-#include <opencv2/opencv.hpp>
+#include <iostream>
 #include <opencv2/aruco.hpp>
 #include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <vector>
 
 
@@ -58,6 +59,14 @@ int main(int argc, char **argv)
     std::cout << "\ndist coeffs\n"
               << dist_coeffs << std::endl;
 
+    int frame_width = in_video.get(CV_CAP_PROP_FRAME_WIDTH);
+    int frame_height = in_video.get(CV_CAP_PROP_FRAME_HEIGHT);
+    int fps = 30;
+    cv::VideoWriter video(
+        "out.avi", CV_FOURCC('M', 'J', 'P', 'G'), fps, 
+        cv::Size(frame_width, frame_height), true
+    );
+
     while (in_video.grab())
     {
 
@@ -84,7 +93,7 @@ int main(int argc, char **argv)
                     image_copy, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 
                     actual_marker_l
                 );
-                
+
                 vector_to_marker.str(std::string());
                 vector_to_marker << std::setprecision(4)
                                  << "x: " << std::setw(8) << tvecs[0](0);
@@ -108,6 +117,7 @@ int main(int argc, char **argv)
             }
         }
 
+        video.write(image_copy);
         cv::imshow("Pose estimation", image_copy);
         char key = (char)cv::waitKey(wait_time);
         if (key == 27)
