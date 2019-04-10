@@ -1,7 +1,7 @@
 # ArUco Markers
 
 <center>
-  <img src="./images/detected_cube.gif"  width="350"/>
+  <img src="./images/detected_cube.gif"  width="400"/>
 </center>
 
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
@@ -54,8 +54,8 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
 
-# if you need a specific version, you should checkout to that version on 
-# both repositories before executing the below commands
+# If you need a specific version, you should checkout to that version on 
+# both repositories before executing the below commands.
 
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
@@ -76,11 +76,11 @@ cmake ../
 make
 
 # create a single marker
-# for details about the parameters, run just ./generate_marker
+# For details about the parameters, run just ./generate_marker .
 ./generate_marker --b=1 -d=16 --id=108 --ms=400 --si marker.jpg
 
-# create a marker board
-# for details about the parameters, run just ./generate_board 
+# Create a marker board.
+# For details about the parameters, run just ./generate_board .
 ./generate_board --bb=1 -h=2 -w=4 -l=200 -s=100 -d=16 --si board.jpg
 ```
 
@@ -123,8 +123,8 @@ mkdir build && cd build
 cmake ../
 make
 
-# below command is accurate only if you used the same parameters when you generated the markers
-# if you changed any of them, change below arguments accordingly
+# Below command is accurate only if you used the same parameters when you generated the markers.
+# If you changed any of them, change below arguments accordingly.
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 ```
 
@@ -138,9 +138,9 @@ To estimate the translation and the rotation of the ArUco marker, run below code
 ```
 cd pose_estimation
 
-# measure the length of the marker you plan to measure with a ruler
-# open src/main.cpp and update the variable 'actual_marker_length' with
-# the measured value (in meters)
+# Measure the length of the marker you plan to use with a ruler.
+# Open src/main.cpp and update the variable 'actual_marker_length' with
+# the measured value (in meters).
 
 mkdir build && cd build
 cmake ../
@@ -162,9 +162,9 @@ To estimate pose and draw a cube over the ArUco marker, run below code:
 ```
 cd draw_cube
 
-# measure the length of the marker you plan to measure with a ruler
-# open src/main.cpp and update the variable 'actual_marker_length' with
-# the measured value (in meters)
+# Measure the length of the marker you plan to use with a ruler.
+# Open src/main.cpp and update the variable 'actual_marker_length' with
+# the measured value (in meters).
 
 mkdir build && cd build
 cmake ../
@@ -173,8 +173,8 @@ make
 ./draw_cube
 ```
 
-Below image shows the output of this code.
+Below GIF shows the output of this code.
 
 <center>
-  <img src="./images/detected_cube.gif"  width="300"/>
+  <img src="./images/detected_cube.gif"  width="350"/>
 </center>
