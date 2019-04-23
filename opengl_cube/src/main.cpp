@@ -51,15 +51,14 @@ bool check_program_link_status(GLuint obj)
     return true;
 }
 
-int main()
-{
-    int width = 640;
-    int height = 480;
 
+bool init_windows(GLFWwindow *&window, const int height, const int width)
+{
     if (glfwInit() == GL_FALSE)
     {
-        std::cerr << "failed to init GLFW" << std::endl;
-        return 1;
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        std::cout << "Exiting the program !" << std::endl;
+        return false;
     }
 
     // select opengl version
@@ -68,12 +67,12 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     // create a window
-    GLFWwindow *window;
+
     if ((window = glfwCreateWindow(width, height, "OpenGL Cube", 0, 0)) == 0)
     {
         std::cerr << "failed to open window" << std::endl;
         glfwTerminate();
-        return 1;
+        return false;
     }
 
     glfwMakeContextCurrent(window);
@@ -83,8 +82,24 @@ int main()
         std::cerr << "failed to init GL3W" << std::endl;
         glfwDestroyWindow(window);
         glfwTerminate();
-        return 1;
+        return false;
     }
+
+    return true;
+}
+
+
+int main(void)
+{
+    int width = 640;
+    int height = 480;
+    bool success;
+
+    // Create the OpenGL window. If the process is unsuccessful, exit 
+    // immediately.
+    GLFWwindow *window;
+    success = init_windows(window, height, width);
+    if (!success) return 1;
 
     // shader source code
     std::string vertex_source =
