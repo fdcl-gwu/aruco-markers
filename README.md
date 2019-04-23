@@ -16,6 +16,7 @@ A few programs in the repository, including the codes to create the markers and 
 4. [Camera Calibration](#camera-calibration)
 5. [Pose Estimation](#pose-estimation)
 6. [Draw a Cube](#draw-a-cube)
+7. [OpenGL Cube](#opengl-cube)
 
 
 ## Installing OpenCV
@@ -178,3 +179,10 @@ Below GIF shows the output of this code.
 <center>
   <img src="./images/detected_cube.gif"  width="350"/>
 </center>
+
+## OpenGL Cube
+Dependencies
+```
+sudo apt-get install libx11-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxext-dev libxcursor-dev libxinerama-dev libxi-dev
+```
+

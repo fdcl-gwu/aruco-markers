@@ -4,3 +4,12 @@
 [submodule "libraries/opencv_contrib"]
 	path = libraries/opencv_contrib
 	url = https://github.com/opencv/opencv_contrib.git
+[submodule "libraries/glfw"]
+	path = libraries/glfw
+	url = git@github.com:glfw/glfw.git
+[submodule "libraries/glxw"]
+	path = libraries/glxw
+	url = git@github.com:rikusalminen/glxw.git
+[submodule "libraries/glm"]
+	path = libraries/glm
+	url = git@github.com:g-truc/glm.git
