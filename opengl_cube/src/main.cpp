@@ -7,12 +7,10 @@
 
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow *window;
 
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
 
 #include "load_shaders.hpp"
 
@@ -137,32 +135,31 @@ struct cube_data
     };
 };
 
-int main(void)
-{
-    cube_data cube;
 
+bool config_window(GLFWwindow *&window, const int height, const int width)
+{
     // Initialise GLFW
     if (!glfwInit())
     {
         fprintf(stderr, "Failed to initialize GLFW\n");
-        getchar();
-        return -1;
+        return false;
     }
 
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+
+    // To make MacOS happy; should not be needed
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(1024, 768, "Tutorial 04 - Colored Cube", NULL, NULL);
+    window = glfwCreateWindow(width, height, "OpenGL Cube", NULL, NULL);
     if (window == NULL)
     {
         fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
-        getchar();
         glfwTerminate();
-        return -1;
+        return false;
     }
     glfwMakeContextCurrent(window);
 
@@ -171,13 +168,30 @@ int main(void)
     if (glewInit() != GLEW_OK)
     {
         fprintf(stderr, "Failed to initialize GLEW\n");
-        getchar();
         glfwTerminate();
-        return -1;
+        return false;
     }
 
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+    return true;
+}
+
+
+int main(void)
+{
+    cube_data cube;
+    int width, height;
+    bool success;
+
+    GLFWwindow *window;
+
+    width = 1024;
+    height = 768;
+
+    success = config_window(window, height, width);
+    if (!success) return 1;
 
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
