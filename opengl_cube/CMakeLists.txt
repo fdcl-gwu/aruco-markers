@@ -10,6 +10,7 @@ add_subdirectory(../libraries/glfw glfw)
 
 include_directories(../libraries/glfw/include)
 include_directories(../libraries/glm)
+include_directories(include)
 
 find_package(GLEW REQUIRED)
 include_directories($(GLEW_INCLUDE_DIRS))
@@ -20,6 +21,7 @@ link_directories (${OPENGLEXAMPLES_BINARY_DIR}/bin)
 
 add_executable (opengl_cube 
     src/main.cpp
+    src/load_shaders.cpp
     )
 target_link_libraries(opengl_cube ${opengl_libs})
 
