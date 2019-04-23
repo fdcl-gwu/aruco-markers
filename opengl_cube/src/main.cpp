@@ -17,6 +17,72 @@
 #include <string>
 #include <vector>
 
+struct cube_data
+{
+    GLuint index[36] = {
+        // face 0:
+        0, 1, 2, // first triangle
+        2, 1, 3, // second triangle
+        // face 1:
+        4, 5, 6, // first triangle
+        6, 5, 7, // second triangle
+        // face 2:
+        8, 9, 10,  // first triangle
+        10, 9, 11, // second triangle
+        // face 3:
+        12, 13, 14, // first triangle
+        14, 13, 15, // second triangle
+        // face 4:
+        16, 17, 18, // first triangle
+        18, 17, 19, // second triangle
+        // face 5:
+        20, 21, 22, // first triangle
+        22, 21, 23, // second triangle
+    };
+
+    // data for a cube
+    // 6 faces with 4 vertices with 6 components (floats)
+    GLfloat vertex[144] = {
+        //  X     Y     Z           R     G     B
+        // face 0:
+        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   // vertex 0
+        -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // vertex 1
+        1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // vertex 2
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // vertex 3
+
+        // face 1:
+        1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // vertex 0
+        1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // vertex 1
+        1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // vertex 2
+        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // vertex 3
+
+        // face 2:
+        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // vertex 0
+        1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f,  // vertex 1
+        -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // vertex 2
+        -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, // vertex 3
+
+        // face 3:
+        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,   // vertex 0
+        1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f,  // vertex 1
+        -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,  // vertex 2
+        -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, // vertex 3
+
+        // face 4:
+        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // vertex 0
+        -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f,  // vertex 1
+        -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  // vertex 2
+        -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, // vertex 3
+
+        // face 5:
+        1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,   // vertex 0
+        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  // vertex 1
+        1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,  // vertex 2
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, // vertex 3
+    };
+};
+
+
 // helper to check and display for shader compiler errors
 bool check_shader_compile_status(GLuint obj)
 {
@@ -88,18 +154,10 @@ bool init_windows(GLFWwindow *&window, const int height, const int width)
     return true;
 }
 
-
-int main(void)
+bool set_shader(
+    GLFWwindow *&window, GLuint &shader_program, GLuint &vertex_shader,
+    GLuint &fragment_shader)
 {
-    int width = 640;
-    int height = 480;
-    bool success;
-
-    // Create the OpenGL window. If the process is unsuccessful, exit 
-    // immediately.
-    GLFWwindow *window;
-    success = init_windows(window, height, width);
-    if (!success) return 1;
 
     // shader source code
     std::string vertex_source =
@@ -121,9 +179,6 @@ int main(void)
         "   FragColor = fcolor;\n"
         "}\n";
 
-    // program and shader handles
-    GLuint shader_program, vertex_shader, fragment_shader;
-
     // we need these to properly pass the strings
     const char *source;
     int length;
@@ -138,7 +193,7 @@ int main(void)
     {
         glfwDestroyWindow(window);
         glfwTerminate();
-        return 1;
+        return false;
     }
 
     // create and compiler fragment shader
@@ -151,7 +206,7 @@ int main(void)
     {
         glfwDestroyWindow(window);
         glfwTerminate();
-        return 1;
+        return false;
     }
 
     // create program
@@ -165,8 +220,33 @@ int main(void)
     glLinkProgram(shader_program);
     check_program_link_status(shader_program);
 
+    return true;
+}
+
+int main(void)
+{
+    int width = 640;
+    int height = 480;
+    bool success;
+    cube_data cube;
+
+    // Create the OpenGL window. If the process is unsuccessful, exit 
+    // immediately.
+    GLFWwindow *window;
+    success = init_windows(window, height, width);
+    if (!success) return 1;
+
+    // program and shader handles
+    GLuint shader_program, vertex_shader, fragment_shader;
+    success = set_shader(
+        window, shader_program, vertex_shader, fragment_shader
+    );
+    if (!success) return 1;
+
     // obtain location of projection uniform
-    GLint ViewProjection_location = glGetUniformLocation(shader_program, "ViewProjection");
+    GLint ViewProjection_location = glGetUniformLocation(
+        shader_program, "ViewProjection"
+    );
 
     // vao and vbo handle
     GLuint vao, vbo, ibo;
@@ -179,48 +259,8 @@ int main(void)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    // data for a cube
-    GLfloat vertexData[] = {
-        //  X     Y     Z           R     G     B
-        // face 0:
-        1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   // vertex 0
-        -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // vertex 1
-        1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  // vertex 2
-        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // vertex 3
-
-        // face 1:
-        1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // vertex 0
-        1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // vertex 1
-        1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,  // vertex 2
-        1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // vertex 3
-
-        // face 2:
-        1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // vertex 0
-        1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f,  // vertex 1
-        -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,  // vertex 2
-        -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, // vertex 3
-
-        // face 3:
-        1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,   // vertex 0
-        1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f,  // vertex 1
-        -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 0.0f,  // vertex 2
-        -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, // vertex 3
-
-        // face 4:
-        -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // vertex 0
-        -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f,  // vertex 1
-        -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  // vertex 2
-        -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, // vertex 3
-
-        // face 5:
-        1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,   // vertex 0
-        -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  // vertex 1
-        1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,  // vertex 2
-        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, // vertex 3
-    };                                         // 6 faces with 4 vertices with 6 components (floats)
-
     // fill with data
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4 * 6, vertexData, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4 * 6, cube.vertex, GL_STATIC_DRAW);
 
     // set up generic attrib pointers
     glEnableVertexAttribArray(0);
@@ -233,29 +273,10 @@ int main(void)
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    GLuint indexData[] = {
-        // face 0:
-        0, 1, 2, // first triangle
-        2, 1, 3, // second triangle
-        // face 1:
-        4, 5, 6, // first triangle
-        6, 5, 7, // second triangle
-        // face 2:
-        8, 9, 10,  // first triangle
-        10, 9, 11, // second triangle
-        // face 3:
-        12, 13, 14, // first triangle
-        14, 13, 15, // second triangle
-        // face 4:
-        16, 17, 18, // first triangle
-        18, 17, 19, // second triangle
-        // face 5:
-        20, 21, 22, // first triangle
-        22, 21, 23, // second triangle
-    };
+    
 
     // fill with data
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6 * 2 * 3, indexData, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6 * 2 * 3, cube.index, GL_STATIC_DRAW);
 
     // we are drawing 3d objects so we want depth testing
     glEnable(GL_DEPTH_TEST);
