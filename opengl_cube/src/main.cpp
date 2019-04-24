@@ -180,6 +180,42 @@ bool config_window(GLFWwindow *&window, const int height, const int width)
     return true;
 }
 
+void config_shaders_cameras(
+    GLuint &programID, GLuint &MatrixID, glm::mat4 &Projection, 
+    glm::mat4 & View
+)
+{
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
+
+    // Create and compile our GLSL program from the shaders
+    programID = LoadShaders(
+        "../TransformVertexShader.vertexshader",
+        "../ColorFragmentShader.fragmentshader"
+    );
+
+    // Get a handle for our "MVP" uniform
+    MatrixID = glGetUniformLocation(programID, "MVP");
+
+    // Projection matrix 
+    Projection = glm::perspective(
+        glm::radians(45.0f), // 45 degree Field of View,
+        4.0f / 3.0f,         // 4:3 ratio,
+        0.1f,                // display range : 0.1 unit <-> 100 units
+        100.0f
+    );
+
+    // Camera matrix
+    View = glm::lookAt(
+        glm::vec3(0.0, 0.0, 0.0), // Camera is at (0, 0, 0), in World Space
+        glm::vec3(-1.0, 0.0, 0.0),  // and looks at -x axis
+        glm::vec3(0.0, 1.0, 0.0)   // Head is up, (0,-1,0) to look upside-down)
+    );
+}
+
 
 int main(void)
 {
@@ -195,36 +231,19 @@ int main(void)
     success = config_window(window, height, width);
     if (!success) return 1;
 
+    GLuint programID, MatrixID;
+    glm::mat4 Projection, View;
+    config_shaders_cameras(programID, MatrixID, Projection, View);
+
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-    // Enable depth test
-    glEnable(GL_DEPTH_TEST);
-    // Accept fragment if it closer to the camera than the former one
-    glDepthFunc(GL_LESS);
-
+    
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
-    // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders(
-        "../TransformVertexShader.vertexshader", 
-        "../ColorFragmentShader.fragmentshader"
-    );
-
-    // Get a handle for our "MVP" uniform
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-
-    // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     
-    // Camera matrix
-    glm::mat4 View = glm::lookAt(
-        glm::vec3(0.0, 0.0, 0.0), // Camera is at (0, 0, 0), in World Space
-        glm::vec3(-1.0, 0.0, 0.0),  // and looks at -x axis
-        glm::vec3(0.0, 1.0, 0.0)   // Head is up, (0,-1,0) to look upside-down)
-    );
 
     // Model matrix : an identity matrix (model will be at the origin)
     glm::mat4 Model = glm::mat4(1.0f);
