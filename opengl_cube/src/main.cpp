@@ -11,6 +11,8 @@
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp> 
+#include <glm/gtx/quaternion.hpp>
 
 #include "load_shaders.hpp"
 
@@ -206,21 +208,27 @@ int main(void)
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("../TransformVertexShader.vertexshader", "../ColorFragmentShader.fragmentshader");
+    GLuint programID = LoadShaders(
+        "../TransformVertexShader.vertexshader", 
+        "../ColorFragmentShader.fragmentshader"
+    );
 
     // Get a handle for our "MVP" uniform
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
     // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+    
     // Camera matrix
     glm::mat4 View = glm::lookAt(
-        glm::vec3(3, 3, 3), // Camera is at (4,3,-3), in World Space
-        glm::vec3(0, 0, 0),  // and looks at the origin
-        glm::vec3(0, 1, 0)   // Head is up (set to 0,-1,0 to look upside-down)
+        glm::vec3(0.0, 0.0, 0.0), // Camera is at (0, 0, 0), in World Space
+        glm::vec3(-1.0, 0.0, 0.0),  // and looks at -x axis
+        glm::vec3(0.0, 1.0, 0.0)   // Head is up, (0,-1,0) to look upside-down)
     );
+
     // Model matrix : an identity matrix (model will be at the origin)
     glm::mat4 Model = glm::mat4(1.0f);
+
     // Our ModelViewProjection : multiplication of our 3 matrices
     glm::mat4 MVP = Projection * View * Model; // Remember, matrix multiplication is the other way around
 
@@ -234,6 +242,9 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube.color), cube.color, GL_STATIC_DRAW);
 
+    glm::quat rot_quat;
+    float deg2rad = 3.14159265359f / 180.f;
+
     do
     {
 
@@ -243,11 +254,24 @@ int main(void)
         // Use our shader
         glUseProgram(programID);
 
+        glm::vec3 EulerAngles(
+            45.0f * deg2rad, // rotation around x-axis
+            0.0f * deg2rad,  // rotation around y-axis
+            0.0f * deg2rad   // rotation around z- axis
+        );
+        rot_quat = glm::quat(EulerAngles);
+        Model = glm::toMat4(rot_quat);
+        Model[3].x = -5.0f;
+        Model[3].y = 0.0f;
+        Model[3].z = 0.0f;
+
+        glm::mat4 MVP = Projection * View * Model;
+
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-        // 1rst attribute buffer : vertices
+        // 1st attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
         glVertexAttribPointer(
