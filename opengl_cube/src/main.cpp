@@ -248,16 +248,21 @@ int main(void)
     do
     {
 
+        // get the time in seconds
+        float t = glfwGetTime();
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
         // Use our shader
         glUseProgram(programID);
 
+        float rotate_speed = 100.0f;
         glm::vec3 EulerAngles(
-            45.0f * deg2rad, // rotation around x-axis
-            0.0f * deg2rad,  // rotation around y-axis
-            0.0f * deg2rad   // rotation around z- axis
+            rotate_speed * t * deg2rad, // rotation around x-axis
+            rotate_speed * t * deg2rad, // rotation around y-axis
+            rotate_speed * t * deg2rad  // rotation around z- axis
         );
         rot_quat = glm::quat(EulerAngles);
         Model = glm::toMat4(rot_quat);
