@@ -10,9 +10,10 @@
 
 // Include GLM
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp> 
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include "load_shaders.hpp"
 
@@ -216,6 +217,20 @@ void config_shaders_cameras(
     );
 }
 
+void transform_model(
+    glm::mat4 &Model, const glm::vec3 &translation_vec,
+    const glm::vec3 &euler_angles, const glm::vec3 &scale_vec)
+{
+    glm::quat rot_quat = glm::quat(euler_angles);
+    glm::mat4 rotation_matrix = glm::toMat4(rot_quat);
+
+    glm::mat4 translation_matrix = glm::translate(translation_vec);
+
+    glm::mat4 scale_matrix = glm::scale(scale_vec);
+
+    Model = translation_matrix * rotation_matrix * scale_matrix * Model;
+}
+
 
 int main(void)
 {
@@ -243,13 +258,12 @@ int main(void)
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
 
-    
-
     // Model matrix : an identity matrix (model will be at the origin)
     glm::mat4 Model = glm::mat4(1.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
-    glm::mat4 MVP = Projection * View * Model; // Remember, matrix multiplication is the other way around
+    // Remember, matrix multiplication is the other way around
+    glm::mat4 MVP = Projection * View * Model;
 
     GLuint vertexbuffer;
     glGenBuffers(1, &vertexbuffer);
@@ -261,7 +275,7 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube.color), cube.color, GL_STATIC_DRAW);
 
-    glm::quat rot_quat;
+    
     float deg2rad = 3.14159265359f / 180.f;
 
     do
@@ -273,21 +287,28 @@ int main(void)
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
         // Use our shader
         glUseProgram(programID);
-
+        
+        // Set transformations
         float rotate_speed = 100.0f;
-        glm::vec3 EulerAngles(
+        glm::vec3 euler_angles(
             rotate_speed * t * deg2rad, // rotation around x-axis
             rotate_speed * t * deg2rad, // rotation around y-axis
             rotate_speed * t * deg2rad  // rotation around z- axis
         );
-        rot_quat = glm::quat(EulerAngles);
-        Model = glm::toMat4(rot_quat);
-        Model[3].x = -5.0f;
-        Model[3].y = 0.0f;
-        Model[3].z = 0.0f;
+
+        glm::vec3 translation_vec(
+            -10.0f, 
+            0.0f, 
+            0.0f
+        );
+
+        float scale = 1.0f;
+        glm::vec3 scale_vec(scale, scale, scale);
+
+        Model = glm::mat4(1.0f);
+        transform_model(Model, translation_vec, euler_angles, scale_vec);
 
         glm::mat4 MVP = Projection * View * Model;
 
