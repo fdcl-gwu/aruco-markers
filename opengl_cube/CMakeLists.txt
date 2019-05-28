@@ -22,6 +22,7 @@ link_directories (${OPENGLEXAMPLES_BINARY_DIR}/bin)
 add_executable (opengl_cube 
     src/main.cpp
     src/load_shaders.cpp
+    src/opengl_config.cpp
     )
 target_link_libraries(opengl_cube ${opengl_libs})
 
