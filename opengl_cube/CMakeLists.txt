@@ -14,17 +14,21 @@ include_directories(include)
 
 find_package(GLEW REQUIRED)
 include_directories($(GLEW_INCLUDE_DIRS))
-link_libraries(${GLEW_LIBRARIES})    
+link_libraries(${GLEW_LIBRARIES})
+
+find_package(OpenCV REQUIRED)
+include_directories(${OPENCV_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/include)
+link_directories(${OpenCV_LIBRARY_DIRS})
 
 SET(opengl_libs ${OPENGL_LIBRARY} ${CMAKE_DL_LIBS} ${GLEW_LIBRARIES} glfw)
-link_directories (${OPENGLEXAMPLES_BINARY_DIR}/bin)
 
 add_executable (opengl_cube 
     src/main.cpp
     src/load_shaders.cpp
     src/opengl_config.cpp
     )
-target_link_libraries(opengl_cube ${opengl_libs})
+target_link_libraries(opengl_cube ${opengl_libs} ${OpenCV_LIBS})
 
 
 

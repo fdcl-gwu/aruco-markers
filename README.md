@@ -183,9 +183,11 @@ Below GIF shows the output of this code.
 ## OpenGL Cube
 
 TODO: 
-[ ] change SSH urls to https
+* [ ] change SSH urls to https
 
 Dependencies
 ```
+cmake -D WITH_OPENGL=ON ../
+sudo apt-get install libgtkglext1 libgtkglext1-dev
 sudo apt-get install libx11-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxrandr-dev libxext-dev libxcursor-dev libxinerama-dev libxi-dev libglew-dev libglfw3-dev libglm-dev build-essential libxmu-dev libgl-dev
 ```
