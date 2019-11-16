@@ -101,4 +101,6 @@ int main(int argc, char **argv)
     }
 
     in_video.release();
+
+    return 0;
 }
