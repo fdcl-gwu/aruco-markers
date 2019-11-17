@@ -195,14 +195,23 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    String videoInput;
     VideoCapture inputVideo;
     int waitTime;
+    bool opened;
     if(!video.empty()) {
-        inputVideo.open(video);
+        videoInput = video;
+        opened = inputVideo.open(video);
         waitTime = 0;
     } else {
-        inputVideo.open(camId);
+        videoInput = camId;
+        opened = inputVideo.open(camId);
         waitTime = 10;
+    }
+
+    if (!opened) {
+        std::cerr << "failed to open video input: " << videoInput << std::endl;
+        return 1;
     }
 
     Ptr<aruco::Dictionary> dictionary =
