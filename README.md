@@ -40,7 +40,7 @@ cd libraries/opencv
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
 make -j4  # if you have more/less cores on your computer, substitute 4 with the number of cores
-          # use command "nproc" to find the number fo cores
+          # use command "nproc" to find the number of cores
 sudo make install
 ```
 
@@ -60,7 +60,7 @@ git clone https://github.com/opencv/opencv_contrib.git
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
 make -j4  # if you have more cores on your computer, substitute 4 with the number of cores
-          # use command "nproc" to find the number fo cores
+          # use command "nproc" to find the number of cores
 sudo make install
 ```
 
@@ -146,7 +146,10 @@ mkdir build && cd build
 cmake ../
 make
 
-./pose_estimation
+./pose_estimation -l=<side length of a single marker (in meters)>
+
+# or, if you you trying this on an already saved video
+./pose_estimation -l=<side length of a single marker (in meters)> -v=<path to the video>
 ```
 
 Below image shows the output of this code. 
@@ -170,7 +173,10 @@ mkdir build && cd build
 cmake ../
 make
 
-./draw_cube
+./draw_cube -l=<side length of a single marker (in meters)>
+
+# or, if you you trying this on an already saved video
+./draw_cube -l=<side length of a single marker (in meters)> -v=<path to the video>
 ```
 
 Below GIF shows the output of this code.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Flight Dynamics and Control Lab
+ * Copyright (c) 2019 Flight Dynamics and Control Lab
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -8,8 +8,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in 
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -29,15 +29,15 @@
 #include <iostream>
 #include <cstdlib>
 
-using namespace cv;
 
 namespace {
 const char* about = "Draw cube on ArUco marker images";
 const char* keys  =
-        "{d        |16    | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-        "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-        "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-        "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+        "{d        |16    | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, "
+        "DICT_4X4_250=2, DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, "
+        "DICT_5X5_250=6, DICT_5X5_1000=7, DICT_6X6_50=8, DICT_6X6_100=9, "
+        "DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12, DICT_7X7_100=13, "
+        "DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
         "{h        |false | Print help }"
         "{l        |      | Actual marker length in meter }"
         "{v        |<none>| Custom video source, otherwise '0' }"
@@ -53,7 +53,7 @@ void drawCubeWireframe(
 
 int main(int argc, char **argv)
 {
-    CommandLineParser parser(argc, argv, keys);
+    cv::CommandLineParser parser(argc, argv, keys);
     parser.about(about);
 
     if (argc < 2) {
@@ -71,20 +71,22 @@ int main(int argc, char **argv)
     int wait_time = 10;
 
     if (marker_length_m <= 0) {
-        std::cerr << "marker length must be a positive value in meter" << std::endl;
+        std::cerr << "marker length must be a positive value in meter" 
+                  << std::endl;
         return 1;
     }
 
-    String videoInput = "0";
-    VideoCapture in_video;
+    cv::String videoInput = "0";
+    cv::VideoCapture in_video;
     if (parser.has("v")) {
-        videoInput = parser.get<String>("v");
+        videoInput = parser.get<cv::String>("v");
         if (videoInput.empty()) {
             parser.printMessage();
             return 1;
         }
         char* end = nullptr;
-        int source = static_cast<int>(std::strtol(videoInput.c_str(), &end, 10));
+        int source = static_cast<int>(std::strtol(videoInput.c_str(), &end, \
+            10));
         if (!end || end == videoInput.c_str()) {
             in_video.open(videoInput); // url
         } else {
@@ -108,8 +110,9 @@ int main(int argc, char **argv)
     cv::Mat camera_matrix, dist_coeffs;
     std::ostringstream vector_to_marker;
 
-    Ptr<aruco::Dictionary> dictionary =
-        aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+    cv::Ptr<cv::aruco::Dictionary> dictionary =
+        cv::aruco::getPredefinedDictionary( \
+        cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
     cv::FileStorage fs("../../calibration_params.yml", cv::FileStorage::READ);
 
@@ -156,6 +159,11 @@ int main(int argc, char **argv)
                     marker_length_m
                 );
 
+                // This section is going to print the data for all the detected
+                // markers. If you have more than a single marker, it is 
+                // recommended to change the below section so that either you
+                // only print the data for a specific marker, or you print the
+                // data for each marker separately.
                 vector_to_marker.str(std::string());
                 vector_to_marker << std::setprecision(4)
                                  << "x: " << std::setw(8) << tvecs[0](0);

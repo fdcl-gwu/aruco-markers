@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Flight Dynamics and Control Lab
+ * Copyright (c) 2019 Flight Dynamics and Control Lab
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -8,8 +8,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in 
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -21,21 +21,20 @@
  *
  */
 
-
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 #include <iostream>
 #include <cstdlib>
 
-using namespace cv;
 
 namespace {
 const char* about = "Detect ArUco marker images";
 const char* keys  =
-        "{d        |16    | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, DICT_4X4_250=2,"
-        "DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, DICT_5X5_250=6, DICT_5X5_1000=7, "
-        "DICT_6X6_50=8, DICT_6X6_100=9, DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12,"
-        "DICT_7X7_100=13, DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
+        "{d        |16    | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, "
+        "DICT_4X4_250=2, DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, "
+        "DICT_5X5_250=6, DICT_5X5_1000=7, DICT_6X6_50=8, DICT_6X6_100=9, "
+        "DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12, DICT_7X7_100=13, "
+        "DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
         "{h        |false | Print help }"
         "{v        |<none>| Custom video source, otherwise '0' }"
         ;
@@ -43,7 +42,7 @@ const char* keys  =
 
 int main(int argc, char **argv)
 {
-    CommandLineParser parser(argc, argv, keys);
+    cv::CommandLineParser parser(argc, argv, keys);
     parser.about(about);
 
     if (parser.get<bool>("h")) {
@@ -53,16 +52,17 @@ int main(int argc, char **argv)
 
     int dictionaryId = parser.get<int>("d");
     int wait_time = 10;
-    String videoInput = "0";
-    VideoCapture in_video;
+    cv::String videoInput = "0";
+    cv::VideoCapture in_video;
     if (parser.has("v")) {
-        videoInput = parser.get<String>("v");
+        videoInput = parser.get<cv::String>("v");
         if (videoInput.empty()) {
             parser.printMessage();
             return 1;
         }
         char* end = nullptr;
-        int source = static_cast<int>(std::strtol(videoInput.c_str(), &end, 10));
+        int source = static_cast<int>(std::strtol(videoInput.c_str(), &end, \
+            10));
         if (!end || end == videoInput.c_str()) {
             in_video.open(videoInput); // url
         } else {
@@ -82,22 +82,24 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    Ptr<aruco::Dictionary> dictionary =
-        aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
+    cv::Ptr<cv::aruco::Dictionary> dictionary =
+        cv::aruco::getPredefinedDictionary( \
+        cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
     while (in_video.grab()) {
-        Mat image, image_copy;
+        cv::Mat image, image_copy;
         in_video.retrieve(image);
         image.copyTo(image_copy);
         std::vector<int> ids;
-        std::vector<std::vector<Point2f> > corners;
-        aruco::detectMarkers(image, dictionary, corners, ids);
-        // if at least one marker detected
+        std::vector<std::vector<cv::Point2f>> corners;
+        cv::aruco::detectMarkers(image, dictionary, corners, ids);
+        
+        // If at least one marker detected
         if (ids.size() > 0)
-            aruco::drawDetectedMarkers(image_copy, corners, ids);
+            cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
 
         imshow("Detected markers", image_copy);
-        char key = (char) waitKey(wait_time);
+        char key = (char)cv::waitKey(wait_time);
         if (key == 27)
             break;
     }
