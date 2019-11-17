@@ -126,7 +126,7 @@ int main(int argc, char **argv)
             aruco::estimatePoseSingleMarkers(corners, marker_length_m,
                     camera_matrix, dist_coeffs, rvecs, tvecs);
             // draw axis for each marker
-            for(int i=0; i < ids.size() && i < 1; i++)
+            for(int i=0; i < ids.size(); i++)
             {
                 aruco::drawAxis(image_copy, camera_matrix, dist_coeffs,
                         rvecs[i], tvecs[i], 0.1);
