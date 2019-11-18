@@ -71,7 +71,8 @@ const char* keys  =
         "{rs       | false | Apply refind strategy }"
         "{zt       | false | Assume zero tangential distortion }"
         "{a        |       | Fix aspect ratio (fx/fy) to this value }"
-        "{pc       | false | Fix the principal point at the center }";
+        "{pc       | false | Fix the principal point at the center }"
+        "{waitkey  | 10    | Time in milliseconds to wait for key press }";
 }
 
 /**
@@ -190,6 +191,8 @@ int main(int argc, char *argv[]) {
         video = parser.get<String>("v");
     }
 
+    int waitTime = parser.get<int>("waitkey");
+
     if(!parser.check()) {
         parser.printErrors();
         return 0;
@@ -197,16 +200,14 @@ int main(int argc, char *argv[]) {
 
     String videoInput;
     VideoCapture inputVideo;
-    int waitTime;
+
     bool opened;
     if(!video.empty()) {
         videoInput = video;
         opened = inputVideo.open(video);
-        waitTime = 0;
     } else {
         videoInput = camId;
         opened = inputVideo.open(camId);
-        waitTime = 10;
     }
 
     if (!opened) {
