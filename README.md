@@ -138,10 +138,6 @@ To estimate the translation and the rotation of the ArUco marker, run below code
 ```
 cd pose_estimation
 
-# Measure the length of the marker you plan to use with a ruler.
-# Open src/main.cpp and update the variable 'actual_marker_length' with
-# the measured value (in meters).
-
 mkdir build && cd build
 cmake ../
 make
@@ -164,10 +160,6 @@ The axes drawn on the markers represents the orientation of the marker with the 
 To estimate pose and draw a cube over the ArUco marker, run below code:
 ```
 cd draw_cube
-
-# Measure the length of the marker you plan to use with a ruler.
-# Open src/main.cpp and update the variable 'actual_marker_length' with
-# the measured value (in meters).
 
 mkdir build && cd build
 cmake ../
