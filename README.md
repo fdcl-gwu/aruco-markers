@@ -55,11 +55,11 @@ git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
 
 # If you need a specific version, you should checkout to that version on 
-# both repositories before executing the below commands.
+# both the repositories before executing the below commands.
 
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ..
-make -j4  # if you have more cores on your computer, substitute 4 with the number of cores
+make -j4  # if you have more/less cores on your computer, substitute 4 with the number of cores
           # use command "nproc" to find the number of cores
 sudo make install
 ```
@@ -75,21 +75,21 @@ mkdir build && cd build
 cmake ../
 make
 
-# create a single marker
-# For details about the parameters, run just ./generate_marker .
+# Create a single marker.
+# For details about the parameters, run just ./generate_marker
 ./generate_marker --b=1 -d=16 --id=108 --ms=400 --si marker.jpg
 
 # Create a marker board.
-# For details about the parameters, run just ./generate_board .
+# For details about the parameters, run just ./generate_board
 ./generate_board --bb=1 -h=2 -w=4 -l=200 -s=100 -d=16 --si board.jpg
 ```
 
-Marker should look like this:
+The generated marker should look like this:
 <center>
   <img src="./images/marker.jpg"  width="150"/> 
 </center>
 
-Board looks like this:
+The generated board should look like this:
 <center>
   <img src="./images/board.jpg"  width="350"/>
 </center>
@@ -97,7 +97,7 @@ Board looks like this:
 
 ## Detecting the Markers
 First, print the [generated markers](#generating-markers).
-Connect a camera to the computer and run below lines:
+Connect a camera to the computer and run below commands:
 ```
 cd detect_markers
 mkdir build && cd build
@@ -116,7 +116,7 @@ All the detected markers would be drawn on the image.
 ## Camera Calibration
 To accurately detect markers or to get accurate pose data, a camera calibration needs to be performed.
 
-Run below lines to perform the camera calibration:
+Run below commands to perform the camera calibration:
 ```
 cd camera_calibration
 mkdir build && cd build
@@ -128,7 +128,7 @@ make
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 ```
 
-Then points the camera at the marker at different orientations and at different angles and save those images by pressing key `C`. 
+Then points the camera at the marker at different orientations and at different angles, and save those images by pressing key `C`. 
 These instructions should appear on the screen.
 Around 30 images should be good enough.
 
@@ -144,13 +144,13 @@ make
 
 ./pose_estimation -l=<side length of a single marker (in meters)>
 
-# or, if you you trying this on an already saved video
+# or, if you are trying this on an already saved video
 ./pose_estimation -l=<side length of a single marker (in meters)> -v=<path to the video>
 ```
 
 Below image shows the output of this code. 
-The distances shown in the left top corner are in meters with axes as same as thos defined in OpenCV model, i.e., `x`-axis increases from left to right of the image, `y`-axis increases from top to bottom of the image, and the `z`-axis points outwards the camera, with the origin on the top left corner of the image.
-The axes drawn on the markers represents the orientation of the marker with the Red-Green-Blue axes order.
+The distances shown in the left top corner are in meters with axes as same as those defined in OpenCV model, i.e., `x`-axis increases from left to right of the image, `y`-axis increases from top to bottom of the image, and the `z`-axis points outwards the camera, with the origin on the top left corner of the image.
+The axes drawn on the markers represent the orientation of the marker with the Red-Green-Blue axes order.
 <center>
   <img src="./images/pose_estimation.png"  width="300"/>
 </center>
@@ -167,7 +167,7 @@ make
 
 ./draw_cube -l=<side length of a single marker (in meters)>
 
-# or, if you you trying this on an already saved video
+# or, if you are trying this on an already saved video
 ./draw_cube -l=<side length of a single marker (in meters)> -v=<path to the video>
 ```
 
