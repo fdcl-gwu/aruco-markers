@@ -8,7 +8,7 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in 
+ * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,9 +23,11 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
+#include <opencv2/calib3d.hpp>
 #include <iostream>
 #include <cstdlib>
-
+#include <math.h>
+#include "Python.h"
 
 namespace {
 const char* about = "Pose estimation of ArUco marker images";
@@ -44,6 +46,44 @@ const char* keys  =
         ;
 }
 
+std::vector<cv::Point3f> getToolTipPosition(double tool_width, double tool_length, double tool_depth,
+  std::vector<cv::Vec3d> rvec, std::vector<cv::Vec3d> tvec){
+     // compute rot_mat
+     cv::Mat rot_mat;
+     cv::Rodrigues(rvec[0], rot_mat);
+
+     // transpose of rot_mat for easy columns extraction
+     cv::Mat rot_mat_t = rot_mat.t();
+
+     // The X orientation effect -> tool width
+     double * tmp = rot_mat_t.ptr<double>(0);
+     cv::Point3f X_orientation(tmp[0]*tool_width,
+                               tmp[1]*tool_width,
+                               tmp[2]*tool_width);
+
+     // The Y orientation effect -> tool length
+     tmp = rot_mat_t.ptr<double>(1);
+     cv::Point3f Y_orientation(tmp[0]*tool_length,
+                               tmp[1]*tool_length,
+                               tmp[2]*tool_length);
+
+     // The Z orientation effect -> tool depth
+     tmp = rot_mat_t.ptr<double>(2);
+     cv::Point3f Z_orientation(tmp[0]*tool_depth,
+                               tmp[1]*tool_depth,
+                               tmp[2]*tool_depth);
+
+     // convert tvec to point
+     cv::Point3f tvec_3f(tvec[0][0], tvec[0][1], tvec[0][2]);
+
+     // return vector:
+     std::vector<cv::Point3f> ret(1,tvec_3f);
+
+     ret[0] = ret[0] + X_orientation - Y_orientation + Z_orientation;
+
+     return ret;
+}
+
 int main(int argc, char **argv)
 {
     cv::CommandLineParser parser(argc, argv, keys);
@@ -59,19 +99,23 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    int resolution_width = 800;
+    int resolution_height = 600;
     int dictionaryId = parser.get<int>("d");
     float marker_length_m = parser.get<float>("l");
     int wait_time = 10;
+    Py_Initialize();
 
     if (marker_length_m <= 0) {
-        std::cerr << "marker length must be a positive value in meter" 
+        std::cerr << "marker length must be a positive value in meter"
                   << std::endl;
         return 1;
     }
 
     cv::String videoInput = "0";
     cv::VideoCapture in_video;
-    if (parser.has("v")) {
+
+    if (parser.has("v")) { //Used to feed in video. We will not use this option.
         videoInput = parser.get<cv::String>("v");
         if (videoInput.empty()) {
             parser.printMessage();
@@ -85,8 +129,14 @@ int main(int argc, char **argv)
         } else {
             in_video.open(source); // id
         }
-    } else {
+    } else { //Used for webcam detection. This is what we will use.
         in_video.open(0);
+        //Set parameters for video capture!
+        //Experiment with these values to get the results that you need.
+        
+        //UNCOMMENT THE FOLLOWING LINES AND FIND A WIDTH/HEIGHT SUITABLE FOR YOUR CAMERA
+       // in_video.set(3, resolution_width); //Set width
+        //in_video.set(4, resolution_height); //Set Height
     }
 
     if (!parser.check()) {
@@ -98,6 +148,12 @@ int main(int argc, char **argv)
         std::cerr << "failed to open video input: " << videoInput << std::endl;
         return 1;
     }
+
+    double rads_to_degress = 180.0 / M_PI;
+    const double tool_width = 35.0 / 2000.0;
+    const double tool_length = 242.56 / 1000.0;
+    const double tool_depth = 9.0 / 1000.0;
+    std::vector<cv::Point3f> tool_tip_position;
 
     cv::Mat image, image_copy;
     cv::Mat camera_matrix, dist_coeffs;
@@ -131,8 +187,35 @@ int main(int argc, char **argv)
             cv::aruco::estimatePoseSingleMarkers(corners, marker_length_m,
                     camera_matrix, dist_coeffs, rvecs, tvecs);
 
-            std::cout << "TRANSLATION VECTORS\n" << tvecs[0] << std::endl; //0th element correspond with xyz
-            std::cout << "ROTATIONAL VECTORS\n" << rvecs[0] << std::endl;
+            tool_tip_position = getToolTipPosition(tool_width, tool_length, tool_depth, rvecs, tvecs);
+
+            //std::cout << "TRANSLATION VECTORS\n" << tvecs[0] << std::endl; //0th element correspond with xyz
+            //std::cout << "ROTATIONAL VECTORS\n" << rvecs[0] << std::endl;
+            
+            std::cout << tool_tip_position[0] << std::endl; 
+            
+            FILE* PScriptFile = fopen("bluetooth_test.py", "r");
+	    if(PScriptFile){
+		PyRun_SimpleFile(PScriptFile, "bluetooth_test.py");
+		fclose(PScriptFile);
+	    }
+
+	    //Run a python function
+	    PyObject *pName, *pModule, *pFunc, *pArgs, *pValue;
+
+	    pName = PyUnicode_FromString((char*)"script");
+	    pModule = PyImport_Import(pName);
+	    pFunc = PyObject_GetAttrString(pModule, (char*)"main");
+	    pArgs = PyTuple_Pack(1, PyUnicode_FromString((char*)tool_tip_position[0])); 
+	    //^^^need to check type for tool_tip_position[0]
+	    
+	    //pValue = PyObject_CallObject(pFunc, pArgs);
+		
+	    //auto result = PyBytes_AsString(pValue);
+	    //std::cout << result << std::endl;
+
+	    //Close the python instance
+	    Py_Finalize(); 
 
             // Draw axis for each marker
             for(int i=0; i < ids.size(); i++)
@@ -145,33 +228,45 @@ int main(int argc, char **argv)
                 // recommended to change the below section so that either you
                 // only print the data for a specific marker, or you print the
                 // data for each marker separately.
-                vector_to_marker.str(std::string());
-                vector_to_marker << std::setprecision(4)
-                                 << "x: " << std::setw(8) << tvecs[0](0);
-                cv::putText(image_copy, vector_to_marker.str(),
-                            cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.6,
-                            cv::Scalar(0, 252, 124), 1, CV_AVX);
 
                 vector_to_marker.str(std::string());
                 vector_to_marker << std::setprecision(4)
-                                 << "y: " << std::setw(8) << tvecs[0](1);
+                                 << "X, Y, Z: " << std::setw(8) << tool_tip_position[0];
                 cv::putText(image_copy, vector_to_marker.str(),
-                            cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.6,
-                            cv::Scalar(0, 252, 124), 1, CV_AVX);
+                            cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.7,
+                            cv::Scalar(0, 252, 124), 1);
 
-                vector_to_marker.str(std::string());
-                vector_to_marker << std::setprecision(4)
-                                 << "z: " << std::setw(8) << tvecs[0](2);
-                cv::putText(image_copy, vector_to_marker.str(),
-                            cv::Point(10, 70), cv::FONT_HERSHEY_SIMPLEX, 0.6,
-                            cv::Scalar(0, 252, 124), 1, CV_AVX);
+                //TO DO. Convert rotation matrix to euler angles and print them where rvecs_degrees exist.
+                // vector_to_marker.str(std::string());
+                // vector_to_marker << std::setprecision(4)
+                //                  << "x-Angle: " << std::setw(8) << rvecs_degrees[0](0);
+                // cv::putText(image_copy, vector_to_marker.str(),
+                //             cv::Point(10, 90), cv::FONT_HERSHEY_SIMPLEX, 0.7,
+                //             cv::Scalar(0, 252, 124), 1);
+                //
+                // vector_to_marker.str(std::string());
+                // vector_to_marker << std::setprecision(4)
+                //                  << "y-Angle: " << std::setw(8) << rvecs_degrees[0](1);
+                // cv::putText(image_copy, vector_to_marker.str(),
+                //             cv::Point(10, 110), cv::FONT_HERSHEY_SIMPLEX, 0.7,
+                //             cv::Scalar(0, 252, 124), 1);
+                //
+                // vector_to_marker.str(std::string());
+                // vector_to_marker << std::setprecision(4)
+                //                  << "z-Angle: " << std::setw(8) << rvecs_degrees[0](2);
+                // cv::putText(image_copy, vector_to_marker.str(),
+                //             cv::Point(10, 130), cv::FONT_HERSHEY_SIMPLEX, 0.7,
+                //             cv::Scalar(0, 252, 124), 1);
             }
+
+            // rvecs_degrees.erase(rvecs_degrees.begin(),rvecs_degrees.begin()+3);
         }
 
         imshow("Pose estimation", image_copy);
         char key = (char)cv::waitKey(wait_time);
-        if (key == 27)
-            break;
+        if (key == 27){
+          break;
+        }
     }
 
     in_video.release();
