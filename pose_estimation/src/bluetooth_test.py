@@ -3,6 +3,7 @@ import sys
 import os
 import time
 import bluetooth
+import thread
 
 
 port = 1
@@ -30,20 +31,21 @@ def receive_data(s):
 	if data:
 		print(data)
 
-
-#if __name__ == '__main__':
-def main(to_send_data):
+def socket_setup(): 
 	s = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+	return s
+	
+def main(to_send_data):
 	try:
 		addr = get_ESP32_addr()
 		if not addr:
 			raise Exception()
-		s.connect((addr, port))
+		socket_setup().connect((addr, port))
 		print("We are now connected to ESP32")
 		
 		while True:
-			#receive_data(s)
-			send_data(s, to_send_data)
+			thread.start_new_thread(receive_data, (socket_setup()))
+			thread.start_new_thread(send_data, (socket_setup(), to_send_data))
 	except:
 		print('ERROR:', sys.exc_info(), '\n')
 		s.close()
@@ -51,7 +53,4 @@ def main(to_send_data):
 			sys.exit(0)
 		except SystemExit:
 			os._exit(0)
-
-if __name__ == '__main__':
-	main(to_send_data)
 

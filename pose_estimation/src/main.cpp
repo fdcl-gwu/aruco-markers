@@ -170,6 +170,20 @@ int main(int argc, char **argv)
 
     std::cout << "camera_matrix\n" << camera_matrix << std::endl;
     std::cout << "\ndist coeffs\n" << dist_coeffs << std::endl;
+    
+    //socket connection
+    FILE* PScriptFile = fopen("bluetooth_test.py", "r");
+	   if(PScriptFile){
+		PyRun_SimpleFile(PScriptFile, "bluetooth_test.py");
+		fclose(PScriptFile);
+	    }
+
+	    //Run a python function
+	    PyObject *pName, *pModule, *pFunc, *pArgs, *pValue;
+
+	    pName = PyUnicode_FromString((char*)"script");
+	    pModule = PyImport_Import(pName);
+	    pFunc = PyObject_GetAttrString(pModule, (char*)"socket_setup");
 
     while (in_video.grab())
     {
@@ -193,29 +207,10 @@ int main(int argc, char **argv)
             //std::cout << "ROTATIONAL VECTORS\n" << rvecs[0] << std::endl;
             
             std::cout << tool_tip_position[0] << std::endl; 
-            
-            FILE* PScriptFile = fopen("bluetooth_test.py", "r");
-	    if(PScriptFile){
-		PyRun_SimpleFile(PScriptFile, "bluetooth_test.py");
-		fclose(PScriptFile);
-	    }
 
-	    //Run a python function
-	    PyObject *pName, *pModule, *pFunc, *pArgs, *pValue;
-
-	    pName = PyUnicode_FromString((char*)"script");
-	    pModule = PyImport_Import(pName);
 	    pFunc = PyObject_GetAttrString(pModule, (char*)"main");
 	    pArgs = PyTuple_Pack(1, PyUnicode_FromString((char*)tool_tip_position[0])); 
 	    //^^^need to check type for tool_tip_position[0]
-	    
-	    //pValue = PyObject_CallObject(pFunc, pArgs);
-		
-	    //auto result = PyBytes_AsString(pValue);
-	    //std::cout << result << std::endl;
-
-	    //Close the python instance
-	    Py_Finalize(); 
 
             // Draw axis for each marker
             for(int i=0; i < ids.size(); i++)
@@ -268,6 +263,8 @@ int main(int argc, char **argv)
           break;
         }
     }
+    //Close the python instance
+    Py_Finalize(); 
 
     in_video.release();
 
