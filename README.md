@@ -25,7 +25,7 @@ But it is highly recommended to install ArUco library packed in OpenCV library.
 The instruction below are for installing OpenCV with ArUco library.
 
 You can install OpenCV using the master branch of their repository, **OR** using the submodules added to this repository.
-Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository works without issues.
+Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository work without issues.
 So it is recommended to install from the submodules.
 
 
@@ -54,7 +54,7 @@ sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libp
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
 
-# If you need a specific version, you should checkout to that version on 
+# If you need a specific version, you should checkout that version on 
 # both the repositories before executing the below commands.
 
 mkdir build && cd build
@@ -126,6 +126,9 @@ make
 # Below command is accurate only if you used the same parameters when you generated the markers.
 # If you changed any of them, change below arguments accordingly.
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
+
+# If you want to calibrate with an already saved video, use `-v` flag.
+./camera_calibration -v=/path/to/your/video.avi -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 ```
 
 Then points the camera at the marker at different orientations and at different angles, and save those images by pressing key `C`. 
