@@ -131,8 +131,9 @@ int main(int argc, char **argv)
             cv::aruco::estimatePoseSingleMarkers(corners, marker_length_m,
                     camera_matrix, dist_coeffs, rvecs, tvecs);
                     
-            std::cout << "TRANSLATION VECTORS\n" << tvecs[0] << std::endl; //0th element correspond with xyz
-            std::cout << "ROTATIONAL VECTORS\n" << rvecs[0] << std::endl;
+            std::cout << "Translation: " << tvecs[0]
+                << "\tRotation: " << rvecs[0] 
+                << std::endl;
             
             // Draw axis for each marker
             for(int i=0; i < ids.size(); i++)

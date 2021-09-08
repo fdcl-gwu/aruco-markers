@@ -1,5 +1,11 @@
 # ArUco Markers
 
+:bangbang: **IMPORTANT**: 
+This assumes you are using OpenCV4.
+If you need to use OpenCV3, please checkout the `cv3` branch before installing dependencies.
+As there are some breaking changes in OpenCV libraries, some parts of the OpenCV4 codes are not compatible with OpenCV3.
+
+
 <center>
   <img src="./images/detected_cube.gif"  width="400"/>
 </center>
@@ -9,7 +15,7 @@ A few programs in the repository, including the codes to create the markers and 
 
 ## Contents
 1. [Installing OpenCV](#installing-opencv)
-    1. [Installing v3.4.2 (recommended)](#installing-v342-recommended)
+    1. [Installing v4.5.3 (recommended)](#installing-v453-recommended)
     2. [Installing the Latest](#installing-the-latest)
 2. [Generating Markers](#generating-markers)
 3. [Detecting the Markers](#detecting-the-markers)
@@ -29,11 +35,11 @@ Building and installing OpenCV with the provided submodules guarantees that the 
 So it is recommended to install from the submodules.
 
 
-### Installing v3.4.2 (recommended)
+### Installing v4.5.3 (recommended)
 ```
 sudo apt-get install build-essential
 sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
 
 git submodule update --init
 cd libraries/opencv
