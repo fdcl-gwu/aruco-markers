@@ -29,6 +29,10 @@ A few programs in the repository, including the codes to create the markers and 
 You can install the standalone ArUco library by downloading the source files which can be found in the above website and building and installing them.
 But it is highly recommended to install ArUco library packed in OpenCV library.
 The instruction below are for installing OpenCV with ArUco library.
+These have been verified to work with Ubuntu 20.04.
+
+If you are on a different OS, a dockerfile is included with this.
+Please skip to the (Docker Build)[#docker-build] section.
 
 You can install OpenCV using the master branch of their repository, **OR** using the submodules added to this repository.
 Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository work without issues.
@@ -40,10 +44,9 @@ So it is recommended to install from the submodules.
 sudo apt install build-essential
 sudo apt install cmake git libgtk2.0-dev pkg-config
 
-sudo apt-get install build-essential
-sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
-
+cd <any directory you want to use>
+git clone https://github.com/fdcl-gwu/aruco-markers.git
+cd aruo-markers
 git submodule update --init
 cd libraries/opencv
 mkdir build && cd build
@@ -56,9 +59,8 @@ sudo make install
 
 ### Installing the Latest
 ```
-sudo apt-get install build-essential
-sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+sudo apt install build-essential
+sudo apt install cmake git libgtk2.0-dev pkg-config
 
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
@@ -73,6 +75,26 @@ make -j4  # if you have more/less cores on your computer, substitute 4 with the 
 sudo make install
 ```
 
+
+### Docker Build
+1. Install an X Server - tested in Windows with [Xming](https://sourceforge.net/projects/xming/)
+1. Launch X Server (default setting should work)
+1. Install [Docker](https://www.docker.com/)
+1. Open Powershell or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+  '''
+  cd <any directory you want to use>
+  git clone https://github.com/fdcl-gwu/aruco-markers.git
+  cd aruo-markers
+
+  # Build the docker image
+  # This builds opencv, and install it. The process can take a considerable
+  # amount of time depending on your computer.
+  docker build -t aruco-markers .
+
+  # Run a container 
+  docker run -it aruco-markers bash
+  '''
+1. Follow below code compiling instructions.
 
 ## Generating Markers
 To detect the markers using a camera, first you need to print the markers.
