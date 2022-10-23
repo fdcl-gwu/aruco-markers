@@ -81,19 +81,19 @@ sudo make install
 1. Launch X Server (default setting should work)
 1. Install [Docker](https://www.docker.com/)
 1. Open Powershell or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
-  '''
-  cd <any directory you want to use>
-  git clone https://github.com/fdcl-gwu/aruco-markers.git
-  cd aruo-markers
+    ```sh
+    cd <any directory you want to use>
+    git clone https://github.com/fdcl-gwu/aruco-markers.git
+    cd aruo-markers
 
-  # Build the docker image
-  # This builds opencv, and install it. The process can take a considerable
-  # amount of time depending on your computer.
-  docker build -t aruco-markers .
+    # Build the docker image
+    # This builds opencv, and install it. The process can take a considerable
+    # amount of time depending on your computer.
+    docker build -t aruco-markers .
 
-  # Run a container 
-  docker run -it aruco-markers bash
-  '''
+    # Run a container 
+    docker run -it aruco-markers bash
+    ```
 1. Follow below code compiling instructions.
 
 ## Generating Markers
