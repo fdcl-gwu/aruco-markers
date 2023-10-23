@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 
         // if at least one marker detected
         if (ids.size() > 0) {
-            // cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
+            cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
             std::vector<cv::Vec3d> rvecs, tvecs;
             cv::aruco::estimatePoseSingleMarkers(corners, marker_length_m,
                                                  camera_matrix, dist_coeffs, rvecs, tvecs);
@@ -156,8 +156,8 @@ int main(int argc, char **argv)
                 // Draw axis for each marker
                 // cv::aruco::drawAxis(image_copy, camera_matrix, dist_coeffs, rvecs[i], tvecs[i], 0.01);
 
-                // calculate marker distance from camera
-                double distance = cv::norm(tvecs[i]);
+                // Calculate marker distance from camera and round to 2 decimal points
+                double distance = std::round(cv::norm(tvecs[i]) * 100) / 100.0;
 
                 // Convert the rotation vector to a rotation matrix
                 cv::Mat rotationMatrix;
@@ -168,19 +168,18 @@ int main(int argc, char **argv)
                 double theta_y = std::atan2(-rotationMatrix.at<double>(2, 0), std::sqrt(rotationMatrix.at<double>(2, 1) * rotationMatrix.at<double>(2, 1) + rotationMatrix.at<double>(2, 2) * rotationMatrix.at<double>(2, 2)));
                 double theta_z = std::atan2(rotationMatrix.at<double>(1, 0), rotationMatrix.at<double>(0, 0));
 
-                // Convert angles from radians to degrees
-                double theta_x_deg = theta_x * 180 / CV_PI;
-                double theta_y_deg = theta_y * 180 / CV_PI;
-                double theta_z_deg = theta_z * 180 / CV_PI;
+                // Convert angles from radians to degrees and round to nearest whole number
+                int theta_x_deg = std::round(theta_x * 180 / CV_PI);  // roll (clockwise is positive)
+                int theta_y_deg = std::round(theta_y * 180 / CV_PI);  // yaw (right is positive)
+                int theta_z_deg = std::round(theta_z * 180 / CV_PI);  // pitch (up is positive)
 
                 // print marker distance and Euler angles to terminal
-                std::cout << "(id, r, x, y, z): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg << std::endl;
-                ;
+                std::cout << "(id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg << std::endl;
 
                 // print marker distance and Euler angles to screen
                 std::ostringstream ss;
-                ss << "(id, r, x, y, z): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg;
-                cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 1);
+                ss << "(id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg;
+                cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 255), 1);
 
                 // Draw arrow from center of screen to center of first marker
                 cv::Point center(image_copy.cols / 2, image_copy.rows / 2);
@@ -195,9 +194,9 @@ int main(int argc, char **argv)
         // print FPS on top right corner of screen
         std::ostringstream ss_fps;
         ss_fps << "FPS: " << fps;
-        cv::putText(image_copy, ss_fps.str(), cv::Point(image_copy.cols - 100, 30), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 1);
+        cv::putText(image_copy, ss_fps.str(), cv::Point(image_copy.cols - 100, 30), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 255), 1);
 
-        imshow("Pose estimation", image_copy);
+        imshow("ArUco Tracking", image_copy);
         char key = (char)cv::waitKey(wait_time);
         if (key == 27)
             break;
