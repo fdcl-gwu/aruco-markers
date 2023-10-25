@@ -26,6 +26,10 @@
 #include <opencv2/aruco.hpp>
 #include <opencv2/opencv.hpp>
 
+#include "opencv2/core/opengl.hpp"
+#include "opencv2/highgui.hpp"
+// #include "opencv2/cudaimgproc.hpp"
+
 namespace {
     const char *about = "Pose estimation of ArUco marker images";
     const char *keys =
@@ -128,20 +132,19 @@ int main(int argc, char **argv)
 
         // Resize image to display in a smaller window
         cv::Mat image_small;
-        cv::resize(image_copy, image_small, cv::Size(), 0.5, 0.5);
+        double scale = 0.8;
+        cv::resize(image_copy, image_small, cv::Size(), scale, scale);
         image_copy = image_small;
 
         std::vector<int> ids;
         std::vector<std::vector<cv::Point2f>> corners;
         cv::aruco::detectMarkers(image_copy, dictionary, corners, ids);
 
-        // Draw red circle with plus sign in center
+        //  Center of screen
         cv::Point center(image_copy.cols / 2, image_copy.rows / 2);
+
+        // center circle radius
         int radius = std::min(center.x, center.y) / 20;
-        cv::Scalar color(0, 0, 255); // Red color
-        cv::circle(image_copy, center, radius, color, 2);
-        cv::line(image_copy, cv::Point(center.x - radius / 2, center.y), cv::Point(center.x + radius / 2, center.y), color, 2);
-        cv::line(image_copy, cv::Point(center.x, center.y - radius / 2), cv::Point(center.x, center.y + radius / 2), color, 2);
 
         // if at least one marker detected
         if (ids.size() > 0) {
@@ -169,17 +172,23 @@ int main(int argc, char **argv)
                 double theta_z = std::atan2(rotationMatrix.at<double>(1, 0), rotationMatrix.at<double>(0, 0));
 
                 // Convert angles from radians to degrees and round to nearest whole number
-                int theta_x_deg = std::round(theta_x * 180 / CV_PI);  // roll (clockwise is positive)
-                int theta_y_deg = std::round(theta_y * 180 / CV_PI);  // yaw (right is positive)
-                int theta_z_deg = std::round(theta_z * 180 / CV_PI);  // pitch (up is positive)
+                int theta_x_deg = std::round(theta_x * 180 / CV_PI); // roll (clockwise is positive)
+                int theta_y_deg = std::round(theta_y * 180 / CV_PI); // yaw (right is positive)
+                int theta_z_deg = std::round(theta_z * 180 / CV_PI); // pitch (up is positive)
 
-                // print marker distance and Euler angles to terminal
-                std::cout << "(id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg << std::endl;
+                // Get current time and format as string with milliseconds
+                auto now = std::chrono::system_clock::now();
+                auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+                auto now_c = std::chrono::system_clock::to_time_t(now);
+                std::stringstream timestamp_ss;
+                timestamp_ss << std::put_time(std::localtime(&now_c), "%Y-%m-%d %H:%M:%S") << '.' << std::setfill('0') << std::setw(3) << now_ms.count();
+                std::string timestamp = timestamp_ss.str();
 
                 // print marker distance and Euler angles to screen
                 std::ostringstream ss;
                 ss << "(id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg;
-                cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 255), 1);
+                cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 0), 5);
+                cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
 
                 // Draw arrow from center of screen to center of first marker
                 cv::Point center(image_copy.cols / 2, image_copy.rows / 2);
@@ -187,14 +196,99 @@ int main(int argc, char **argv)
                 cv::Scalar color(0, 255, 0); // Green color
                 cv::arrowedLine(image_copy, center, marker_center, color, 2);
 
+                // Calculate pitch and yaw angles to center marker in frame
+                double marker_x = tvecs[i][0];
+                double marker_y = tvecs[i][1];
+                double marker_z = tvecs[i][2];
+
+                double marker_distance = std::sqrt(marker_x * marker_x + marker_y * marker_y + marker_z * marker_z);
+                double pitch_target = 19.0;
+                double yaw_target = 42.0;
+                double pitch = (std::asin(marker_y / marker_distance) * 180 / CV_PI - pitch_target) * -1; // negative sign to invert pitch
+                double yaw = std::atan2(marker_x, marker_z) * 180 / CV_PI - yaw_target;
+
+                // Draw arrow pointing downwards if pitch is negative, else draw arrow pointing upwards
+                if (pitch <= -1) {
+                    cv::Point arrow_start(center.x, center.y + radius + 40);
+                    cv::Point arrow_end(center.x, center.y + radius + 80);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                }
+                else if (pitch >= 1) {
+                    cv::Point arrow_start(center.x, center.y - radius - 40);
+                    cv::Point arrow_end(center.x, center.y - radius - 80);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                }
+
+                // Draw arrow pointing right if yaw is positive, else draw arrow pointing left
+                if (yaw >= 1) {
+                    cv::Point arrow_start(center.x + radius + 40, center.y);
+                    cv::Point arrow_end(center.x + radius + 80, center.y);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                }
+                else if (yaw <= -1) {
+                    cv::Point arrow_start(center.x - radius - 40, center.y);
+                    cv::Point arrow_end(center.x - radius - 80, center.y);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                }
+
+                // Print pitch and yaw angles to terminal
+                std::cout << "Pitch: " << pitch << " degrees" << std::endl;
+                std::cout << "Yaw: " << yaw << " degrees" << std::endl;
+
+                // Draw pitch and yaw angles on image
+                std::ostringstream ss_paw_pitch;
+                ss_paw_pitch << "Pitch: " << static_cast<int>(pitch) << ", Yaw: " << static_cast<int>(yaw) << "";
+                cv::Size text_size = cv::getTextSize(ss_paw_pitch.str(), cv::FONT_HERSHEY_COMPLEX, 0.5, 1, nullptr);
+                cv::Point text_pos(center.x - text_size.width / 2, center.y - radius - text_size.height - 10);
+                cv::putText(image_copy, ss_paw_pitch.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 0), 5);
+                cv::putText(image_copy, ss_paw_pitch.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+
+                // Display distance under the crosshair
+                std::ostringstream ss_dist;
+                ss_dist << std::fixed << std::setprecision(2) << distance << " m";
+                text_size = cv::getTextSize(ss_dist.str(), cv::FONT_HERSHEY_COMPLEX, 0.5, 1, nullptr);
+                text_pos = cv::Point(center.x - text_size.width / 2, center.y + radius + text_size.height + 10);
+                cv::putText(image_copy, ss_dist.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 0), 5);
+                cv::putText(image_copy, ss_dist.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+
+                // Print marker distance and Euler angles with timestamp to terminal
+                std::cout << "[" << timestamp << "] (id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg << std::endl;
+
                 break;
             }
         }
+        else {
+            // display "Scan for ArUco marker" on screen
+            std::ostringstream ss_msg;
+            ss_msg << "Scan for ArUco marker . . .";
+            cv::Size text_size = cv::getTextSize(ss_msg.str(), cv::FONT_HERSHEY_COMPLEX, 0.5, 1, nullptr);
+            cv::Point text_pos(center.x - text_size.width / 2, center.y - radius - text_size.height - 10);
+            cv::putText(image_copy, ss_msg.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 0), 5);
+            cv::putText(image_copy, ss_msg.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+        }
+
+        cv::Scalar color(0, 0, 255); // Red color
+
+        // + crosshair
+        cv::line(image_copy, cv::Point(center.x - radius / 2, center.y), cv::Point(center.x + radius / 2, center.y), color, 3);
+        cv::line(image_copy, cv::Point(center.x, center.y - radius / 2), cv::Point(center.x, center.y + radius / 2), color, 3);
+
+        // x crosshair
+        int const offset = 3;
+        cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y - radius / 2 - offset), cv::Point(center.x - radius / 2 + offset, center.y - radius / 2 + offset), color, 2);
+        cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y + radius / 2 + offset), cv::Point(center.x - radius / 2 + offset, center.y + radius / 2 - offset), color, 2);
+        cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y - radius / 2 - offset), cv::Point(center.x + radius / 2 - offset, center.y - radius / 2 + offset), color, 2);
+        cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y + radius / 2 + offset), cv::Point(center.x + radius / 2 - offset, center.y + radius / 2 - offset), color, 2);
 
         // print FPS on top right corner of screen
         std::ostringstream ss_fps;
         ss_fps << "FPS: " << fps;
-        cv::putText(image_copy, ss_fps.str(), cv::Point(image_copy.cols - 100, 30), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 255), 1);
+        cv::putText(image_copy, ss_fps.str(), cv::Point(image_copy.cols - 100, 30), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 0, 0), 5);
+        cv::putText(image_copy, ss_fps.str(), cv::Point(image_copy.cols - 100, 30), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
 
         imshow("ArUco Tracking", image_copy);
         char key = (char)cv::waitKey(wait_time);
