@@ -46,6 +46,13 @@ namespace {
         "{v        |<none>| Custom video source, otherwise '0' }";
 }
 
+cv::Scalar red(0, 0, 255);       // Red color
+cv::Scalar white(255, 255, 255); // white color
+cv::Scalar black(0, 0, 0);       // black color
+cv::Scalar green(0, 255, 0);     // green color
+cv::Scalar blue(255, 0, 0);      // blue color
+cv::Scalar yellow(0, 255, 255);  // yellow color
+
 int main(int argc, char **argv)
 {
     cv::CommandLineParser parser(argc, argv, keys);
@@ -146,6 +153,18 @@ int main(int argc, char **argv)
         // center circle radius
         int radius = std::min(center.x, center.y) / 20;
 
+        // display timestamp on bottom left corner of screen
+        // Get current time and format as string with milliseconds
+        auto now = std::chrono::system_clock::now();
+        auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+        auto now_c = std::chrono::system_clock::to_time_t(now);
+        std::stringstream ss_timestamp;
+        ss_timestamp << std::put_time(std::localtime(&now_c), "%Y-%m-%d %H:%M:%S") << '.' << std::setfill('0') << std::setw(3) << now_ms.count();
+        std::string timestamp = ss_timestamp.str();
+
+        cv::putText(image_copy, ss_timestamp.str(), cv::Point(10, image_copy.rows - 10), cv::FONT_HERSHEY_COMPLEX, 0.5, black, 5);
+        cv::putText(image_copy, ss_timestamp.str(), cv::Point(10, image_copy.rows - 10), cv::FONT_HERSHEY_COMPLEX, 0.5, green, 2);
+
         // if at least one marker detected
         if (ids.size() > 0) {
             cv::aruco::drawDetectedMarkers(image_copy, corners, ids);
@@ -176,14 +195,6 @@ int main(int argc, char **argv)
                 int theta_y_deg = std::round(theta_y * 180 / CV_PI); // yaw (right is positive)
                 int theta_z_deg = std::round(theta_z * 180 / CV_PI); // pitch (up is positive)
 
-                // Get current time and format as string with milliseconds
-                auto now = std::chrono::system_clock::now();
-                auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-                auto now_c = std::chrono::system_clock::to_time_t(now);
-                std::stringstream timestamp_ss;
-                timestamp_ss << std::put_time(std::localtime(&now_c), "%Y-%m-%d %H:%M:%S") << '.' << std::setfill('0') << std::setw(3) << now_ms.count();
-                std::string timestamp = timestamp_ss.str();
-
                 // print marker distance and Euler angles to screen
                 std::ostringstream ss;
                 ss << "(id, dist, roll, yaw, pitch): " << ids[i] << ", " << distance << ", " << theta_x_deg << ", " << theta_y_deg << ", " << theta_z_deg;
@@ -191,10 +202,10 @@ int main(int argc, char **argv)
                 cv::putText(image_copy, ss.str(), cv::Point(10, 30 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
 
                 // Draw arrow from center of screen to center of first marker
-                cv::Point center(image_copy.cols / 2, image_copy.rows / 2);
-                cv::Point marker_center(corners[0][0].x + (corners[0][2].x - corners[0][0].x) / 2, corners[0][0].y + (corners[0][2].y - corners[0][0].y) / 2);
-                cv::Scalar color(0, 255, 0); // Green color
-                cv::arrowedLine(image_copy, center, marker_center, color, 2);
+                // cv::Point center(image_copy.cols / 2, image_copy.rows / 2);
+                // cv::Point marker_center(corners[0][0].x + (corners[0][2].x - corners[0][0].x) / 2, corners[0][0].y + (corners[0][2].y - corners[0][0].y) / 2);
+                // cv::Scalar color(0, 255, 0); // Green color
+                // cv::arrowedLine(image_copy, center, marker_center, color, 2);
 
                 // Calculate pitch and yaw angles to center marker in frame
                 double marker_x = tvecs[i][0];
@@ -211,28 +222,38 @@ int main(int argc, char **argv)
                 if (pitch <= -1) {
                     cv::Point arrow_start(center.x, center.y + radius + 40);
                     cv::Point arrow_end(center.x, center.y + radius + 80);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, white, 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, red, 2);
                 }
                 else if (pitch >= 1) {
                     cv::Point arrow_start(center.x, center.y - radius - 40);
                     cv::Point arrow_end(center.x, center.y - radius - 80);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, white, 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, red, 2);
                 }
 
                 // Draw arrow pointing right if yaw is positive, else draw arrow pointing left
                 if (yaw >= 1) {
                     cv::Point arrow_start(center.x + radius + 40, center.y);
                     cv::Point arrow_end(center.x + radius + 80, center.y);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, white, 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, red, 2);
                 }
                 else if (yaw <= -1) {
                     cv::Point arrow_start(center.x - radius - 40, center.y);
                     cv::Point arrow_end(center.x - radius - 80, center.y);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(255, 255, 255), 5);
-                    cv::arrowedLine(image_copy, arrow_start, arrow_end, cv::Scalar(0, 0, 255), 2);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, white, 5);
+                    cv::arrowedLine(image_copy, arrow_start, arrow_end, red, 2);
+                }
+
+                // if pitch between -1 and 1, and yaw between -1 and 1, draw crosshair X
+                if (pitch > -1 && pitch < 1 && yaw > -1 && yaw < 1) {
+                    // x crosshair
+                    int const offset = 3;
+                    cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y - radius / 2 - offset), cv::Point(center.x - radius / 2 + offset, center.y - radius / 2 + offset), green, 3);
+                    cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y + radius / 2 + offset), cv::Point(center.x - radius / 2 + offset, center.y + radius / 2 - offset), green, 3);
+                    cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y - radius / 2 - offset), cv::Point(center.x + radius / 2 - offset, center.y - radius / 2 + offset), green, 3);
+                    cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y + radius / 2 + offset), cv::Point(center.x + radius / 2 - offset, center.y + radius / 2 - offset), green, 3);
                 }
 
                 // Print pitch and yaw angles to terminal
@@ -271,18 +292,9 @@ int main(int argc, char **argv)
             cv::putText(image_copy, ss_msg.str(), text_pos, cv::FONT_HERSHEY_COMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
         }
 
-        cv::Scalar color(0, 0, 255); // Red color
-
         // + crosshair
-        cv::line(image_copy, cv::Point(center.x - radius / 2, center.y), cv::Point(center.x + radius / 2, center.y), color, 3);
-        cv::line(image_copy, cv::Point(center.x, center.y - radius / 2), cv::Point(center.x, center.y + radius / 2), color, 3);
-
-        // x crosshair
-        int const offset = 3;
-        cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y - radius / 2 - offset), cv::Point(center.x - radius / 2 + offset, center.y - radius / 2 + offset), color, 2);
-        cv::line(image_copy, cv::Point(center.x - radius / 2 - offset, center.y + radius / 2 + offset), cv::Point(center.x - radius / 2 + offset, center.y + radius / 2 - offset), color, 2);
-        cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y - radius / 2 - offset), cv::Point(center.x + radius / 2 - offset, center.y - radius / 2 + offset), color, 2);
-        cv::line(image_copy, cv::Point(center.x + radius / 2 + offset, center.y + radius / 2 + offset), cv::Point(center.x + radius / 2 - offset, center.y + radius / 2 - offset), color, 2);
+        cv::line(image_copy, cv::Point(center.x - radius / 2, center.y), cv::Point(center.x + radius / 2, center.y), red, 3);
+        cv::line(image_copy, cv::Point(center.x, center.y - radius / 2), cv::Point(center.x, center.y + radius / 2), red, 3);
 
         // print FPS on top right corner of screen
         std::ostringstream ss_fps;
