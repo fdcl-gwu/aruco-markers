@@ -85,16 +85,22 @@ sudo make install
     ```sh
     cd <any directory you want to use>
     git clone https://github.com/fdcl-gwu/aruco-markers.git
-    cd aruo-markers
+    cd aruco-markers
 
     # Build the docker image
-    # This builds opencv, and install it. The process can take a considerable
-    # amount of time depending on your computer.
-    docker build -t aruco-markers .
+    bash docker_build.sh
 
     # Run a container 
-    docker run -it aruco-markers bash
+    bash docker_start.sh
+
+    # After starting the container, you should be inside the docker.
+    # Run the OpenCV install script (only required to do the first time).
+    # This builds opencv, and install it. The process can take a considerable
+    # amount of time depending on your computer.
+    cd aruco-markers
+    bash docker_opencv_setup.sh
     ```
+
 1. Follow below code compiling instructions.
 
 ## Generating Markers
