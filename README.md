@@ -11,12 +11,14 @@ As there are some breaking changes in OpenCV libraries, some parts of the OpenCV
 </center>
 
 This repository includes codes that can be used to work with the augmented reality library, [ArUco](https://www.uco.es/investiga/grupos/ava/node/26).
-A few programs in the repository, including the codes to create the markers and to calibrate the cameras, are copies of the examples included with the OpenCV libraries with minor changes, which are added so that everything is in one place.
+A few programs in the repository, including the codes to create the markers and to calibrate the cameras, are copies of the examples included with the OpenCV libraries with minor changes.
+Those are added here so that everything is in one place.
 
 ## Contents
 1. [Installing OpenCV](#installing-opencv)
     1. [Installing v4.5.3 (recommended)](#installing-v453-recommended)
-    2. [Installing the Latest](#installing-the-latest)
+    1. [Installing the Latest](#installing-the-latest)
+    1. [Docker Build](#docker-build)
 2. [Generating Markers](#generating-markers)
 3. [Detecting the Markers](#detecting-the-markers)
 4. [Camera Calibration](#camera-calibration)
@@ -29,6 +31,10 @@ A few programs in the repository, including the codes to create the markers and 
 You can install the standalone ArUco library by downloading the source files which can be found in the above website and building and installing them.
 But it is highly recommended to install ArUco library packed in OpenCV library.
 The instruction below are for installing OpenCV with ArUco library.
+These have been verified to work with Ubuntu 20.04.
+
+If you are on a different OS, and/or prefer Docker, a dockerfile is included with this.
+Please skip to the (Docker Build)[#docker-build] section.
 
 You can install OpenCV using the master branch of their repository, **OR** using the submodules added to this repository.
 Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository work without issues.
@@ -37,10 +43,18 @@ So it is recommended to install from the submodules.
 
 ### Installing v4.5.3 (recommended)
 ```
-sudo apt-get install build-essential
-sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
+sudo apt install build-essential
+sudo apt install cmake git libgtk2.0-dev pkg-config
 
+# Image support
+sudo apt install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev
+
+# Video support
+sudo apt install -y libavcodec-dev libavformat-dev libswscale-dev
+
+cd <any directory you want to use>
+git clone https://github.com/fdcl-gwu/aruco-markers.git
+cd aruo-markers
 git submodule update --init
 cd libraries/opencv
 mkdir build && cd build
@@ -53,9 +67,14 @@ sudo make install
 
 ### Installing the Latest
 ```
-sudo apt-get install build-essential
-sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+sudo apt install build-essential
+sudo apt install cmake git libgtk2.0-dev pkg-config
+
+# Image support
+sudo apt install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev
+
+# Video support
+sudo apt install -y libavcodec-dev libavformat-dev libswscale-dev
 
 git clone https://github.com/opencv/opencv.git
 git clone https://github.com/opencv/opencv_contrib.git
@@ -70,6 +89,60 @@ make -j4  # if you have more/less cores on your computer, substitute 4 with the 
 sudo make install
 ```
 
+
+### Docker Build
+
+Following instructions are for a Linux host. 
+Though Docker should work for any OS, the GUI setup used here is only has been tested on a Linux host.
+If you are on Windows or Mac, you will need to install an X Server, for example [Xming](https://sourceforge.net/projects/xming/), to get the GUI to work.
+
+You have two options here:
+1. Pulling Docker image from hub - easy and fast
+2. Create the Docker image from scratch - slow, but you get more transparency
+
+#### Pulling Docker Image
+1. Install [Docker](https://www.docker.com/)
+1. Open a terminal and run
+    ```sh
+    # Pull the Docker image
+    docker pull kanishgama/aruco-markers:opencv-4.5.3
+
+    # Enable xhost - equired for GUI
+    xhost +
+    
+    # Replace "-it aruco-markers bash" with "-it kanishgama/aruco-markers:opencv-4.5.3", then start a container
+    bash docker_start.sh
+    ```
+
+#### Create Docker Image Manually
+1. Install [Docker](https://www.docker.com/)
+1. Open a terminal and run:
+    ```sh
+    cd <any directory you want to use>
+    git clone https://github.com/fdcl-gwu/aruco-markers.git
+    cd aruco-markers
+
+    # Enable xhost - equired for GUI
+    xhost +
+
+    # Build the docker image
+    bash docker_build.sh
+
+    # Run a container 
+    bash docker_start.sh
+
+    # After starting the container, you should be inside the docker.
+    # Run the OpenCV install script (only required to do the first time).
+    # This builds opencv, and install it. The process can take a considerable
+    # amount of time depending on your computer.
+    cd aruco-markers
+    bash docker_opencv_setup.sh
+
+    # After running the OpenCV install script, for any subsequent run, you only
+    # have to run the docker run bash docker_start.sh script.
+    ```
+
+1. Follow below code compiling instructions.
 
 ## Generating Markers
 To detect the markers using a camera, first you need to print the markers.
