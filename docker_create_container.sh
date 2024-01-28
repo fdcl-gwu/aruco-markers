@@ -1,5 +1,5 @@
 docker run \
-    --rm \
+    --name aruco-markers-container \
     --mount source="$(pwd)",target=/home/aruco-markers,type=bind \
     --net host \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
