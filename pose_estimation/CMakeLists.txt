@@ -1,10 +1,5 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.16.3)
 project(pose_estimation)
-
-if(COMMAND cmake_policy)
-	cmake_policy(SET CMP0003 OLD)
-	cmake_policy(SET CMP0015 OLD)
-endif(COMMAND cmake_policy)
 
 set (CMAKE_CXX_STANDARD 11)
 find_package(OpenCV REQUIRED)

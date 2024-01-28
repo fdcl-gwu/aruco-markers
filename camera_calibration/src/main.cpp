@@ -36,6 +36,8 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 */
 
+// FDCL Note: This has been copied from the OpenCV libraries with some minor 
+// changes.
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
@@ -238,7 +240,7 @@ int main(int argc, char *argv[]) {
         // detect markers
         aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
 
-        // refind strategy to detect more markers
+        // refine strategy to detect more markers
         if(refindStrategy) aruco::refineDetectedMarkers(image, board, corners, ids, rejected);
 
         // draw results
