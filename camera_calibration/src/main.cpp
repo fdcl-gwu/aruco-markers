@@ -36,6 +36,8 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
 */
 
+// FDCL Note: This has been copied from the OpenCV libraries with some minor 
+// changes.
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
