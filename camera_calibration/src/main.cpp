@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
         // detect markers
         aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
 
-        // refine strategy to detect more markers
+        // refind strategy to detect more markers
         if(refindStrategy) aruco::refineDetectedMarkers(image, board, corners, ids, rejected);
 
         // draw results
