@@ -3,7 +3,7 @@
 :bangbang: **IMPORTANT**: 
 This assumes you are using OpenCV4.
 If you need to use OpenCV3, please checkout the `cv3` branch before installing dependencies.
-As there are some breaking changes in OpenCV libraries, some parts of the OpenCV4 codes are not compatible with OpenCV3.
+As there are a few breaking changes in OpenCV libraries, some parts of the OpenCV4 codes are not compatible with OpenCV3.
 
 
 <center>
@@ -34,7 +34,7 @@ The instruction below are for installing OpenCV with ArUco library.
 These have been verified to work with Ubuntu 20.04.
 
 If you are on a different OS, and/or prefer Docker, a dockerfile is included with this.
-Please skip to the (Docker Build)[#docker-build] section.
+Please skip to the [Docker Build](#docker-build) section.
 
 You can install OpenCV using the master branch of their repository, **OR** using the submodules added to this repository.
 Building and installing OpenCV with the provided submodules guarantees that the other codes on this repository work without issues.
@@ -54,7 +54,7 @@ sudo apt install -y libavcodec-dev libavformat-dev libswscale-dev
 
 cd <any directory you want to use>
 git clone https://github.com/fdcl-gwu/aruco-markers.git
-cd aruo-markers
+cd aruco-markers
 git submodule update --init
 cd libraries/opencv
 mkdir build && cd build
@@ -107,7 +107,7 @@ You have two options here:
     # Pull the Docker image
     docker pull kanishgama/aruco-markers:opencv-4.5.3
 
-    # Enable xhost - equired for GUI
+    # Enable xhost - required for GUI
     xhost +
     
     # Replace "-it aruco-markers bash" with "-it kanishgama/aruco-markers:opencv-4.5.3", then start a container
@@ -122,7 +122,7 @@ You have two options here:
     git clone https://github.com/fdcl-gwu/aruco-markers.git
     cd aruco-markers
 
-    # Enable xhost - equired for GUI
+    # Enable xhost - required for GUI
     xhost +
 
     # Build the docker image
@@ -210,7 +210,7 @@ make
 ./camera_calibration -v=/path/to/your/video.avi -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 ```
 
-Then points the camera at the marker at different orientations and at different angles, and save those images by pressing key `C`. 
+Then point the camera at the marker at different orientations and at different angles, and save those images by pressing key `C`. 
 These instructions should appear on the screen.
 Around 30 images should be good enough.
 
