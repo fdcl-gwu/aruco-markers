@@ -26,68 +26,35 @@
 #include <iostream>
 #include <cstdlib>
 
+#include "fdcl_common.hpp"
 
-namespace {
-const char* about = "Detect ArUco marker images";
-const char* keys  =
-        "{d        |16    | dictionary: DICT_4X4_50=0, DICT_4X4_100=1, "
-        "DICT_4X4_250=2, DICT_4X4_1000=3, DICT_5X5_50=4, DICT_5X5_100=5, "
-        "DICT_5X5_250=6, DICT_5X5_1000=7, DICT_6X6_50=8, DICT_6X6_100=9, "
-        "DICT_6X6_250=10, DICT_6X6_1000=11, DICT_7X7_50=12, DICT_7X7_100=13, "
-        "DICT_7X7_250=14, DICT_7X7_1000=15, DICT_ARUCO_ORIGINAL = 16}"
-        "{h        |false | Print help }"
-        "{v        |<none>| Custom video source, otherwise '0' }"
-        ;
-}
 
 int main(int argc, char **argv)
 {
-    cv::CommandLineParser parser(argc, argv, keys);
-    parser.about(about);
+    cv::CommandLineParser parser(argc, argv, fdcl::keys);
 
-    if (parser.get<bool>("h")) {
-        parser.printMessage();
-        return 0;
+    const char* about = "Detect ArUco marker images";
+    auto success = parse_inputs(parser, about);
+    if (!success) {
+        return 1;
+    }
+
+    cv::VideoCapture in_video;
+    success = parse_video_in(in_video, parser);
+    if (!success) {
+        return 1;
     }
 
     int dictionary_id = parser.get<int>("d");
     int wait_time = 10;
 
-    // Parse video input
-    cv::String video_input = "0";
-    cv::VideoCapture in_video;
-    if (parser.has("v")) {
-        video_input = parser.get<cv::String>("v");
-        if (video_input.empty()) {
-            parser.printMessage();
-            return 1;
-        }
-        char* end = nullptr;
-        int source = static_cast<int>(std::strtol(video_input.c_str(), &end, \
-            10));
-        if (!end || end == video_input.c_str()) {
-            in_video.open(video_input); // url
-        } else {
-            in_video.open(source); // id
-        }
-    } else {
-        in_video.open(0);
-    }
-
-    if (!parser.check()) {
-        parser.printErrors();
-        return 1;
-    }
-
-    if (!in_video.isOpened()) {
-        std::cerr << "Failed to open video input: " << video_input << std::endl;
-        return 1;
-    }
-
+    // Create the dictionary from the same dictionary the marker was generated.
     cv::Ptr<cv::aruco::Dictionary> dictionary =
         cv::aruco::getPredefinedDictionary( \
         cv::aruco::PREDEFINED_DICTIONARY_NAME(dictionary_id));
 
+
+    // Process the video
     while (in_video.grab()) {
         cv::Mat image, image_copy;
         in_video.retrieve(image);

@@ -6,6 +6,7 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${OPENCV_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/../common/include)
 
 link_directories(${OpenCV_LIBRARY_DIRS})
 
