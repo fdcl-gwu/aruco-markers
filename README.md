@@ -178,12 +178,17 @@ The generated board should look like this:
 First, print the [generated markers](#generating-markers).
 Connect a camera to the computer and run below commands:
 ```
-cd detect_markers
+cd detect_marker
 mkdir build && cd build
 cmake ../
 make
 
+# Running the following will open the your system camera and detect all the markers from the defined library.
 ./detect_markers
+
+
+# If you just need to test, and you do not have a printed marker handy, try the test video in this repo with the below command.
+./detect_markers -v=../../test_data/test_video.mp4 
 ```
 
 All the detected markers would be drawn on the image.
@@ -206,8 +211,8 @@ make
 # If you changed any of them, change below arguments accordingly.
 ./camera_calibration -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
 
-# If you want to calibrate with an already saved video, use `-v` flag.
-./camera_calibration -v=/path/to/your/video.avi -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=<side length of a single marker (in meters)> -s=<separation between two consecutive markers in the grid (in meters)> ../../calibration_params.yml
+# If you want to calibrate with an already saved video, use `-v` flag. For example, for the test video:
+./camera_calibration -v=../../test_data/test_video.mp4 -d=16 -dp=../detector_params.yml -h=2 -w=4 -l=0.3 -s=0.15 ../../calibration_params.yml
 ```
 
 Then point the camera at the marker at different orientations and at different angles, and save those images by pressing key `C`. 
@@ -226,8 +231,8 @@ make
 
 ./pose_estimation -l=<side length of a single marker (in meters)>
 
-# or, if you are trying this on an already saved video
-./pose_estimation -l=<side length of a single marker (in meters)> -v=<path to the video>
+# For example, for the test video:
+./pose_estimation -l=0.3 -v=../../test_data/test_video.mp4
 ```
 
 Below image shows the output of this code. 
@@ -249,8 +254,8 @@ make
 
 ./draw_cube -l=<side length of a single marker (in meters)>
 
-# or, if you are trying this on an already saved video
-./draw_cube -l=<side length of a single marker (in meters)> -v=<path to the video>
+For example, for the test video:
+./draw_cube -l=0.3 -v=../../test_data/test_video.mp4
 ```
 
 Below GIF shows the output of this code.
